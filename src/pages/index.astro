@@ -6,7 +6,7 @@ import heroImg from '../assets/photos/hero.jpg';
 import serviceImg from '../assets/photos/entretien-skierg-cordes.jpg';
 import bandImg from '../assets/photos/intervention-banner.jpg';
 import {
-  hero, services, serviceTag, equipment, contact, testimonial, social,
+  hero, services, serviceTag, equipment, equipmentModels, contact, testimonial, social,
 } from '../data/content';
 import { withBase } from '../utils/url';
 
@@ -58,6 +58,19 @@ const serviceLinks = ['/entretien', '/reparation', '/entretien'];
     <p style="margin-top:1.5rem;font-weight:700;font-size:0.95rem;">{serviceTag}</p>
   </section>
 
+  <section style="max-width:1400px;margin:0 auto;padding:5rem 1.5rem;">
+    <h2 class="display" style="font-size:clamp(1.75rem,4vw,2.5rem);margin:0 0 0.5rem;">Nos spécialités</h2>
+    <p style="color:var(--charcoal);font-size:1.05rem;margin:0 0 2.5rem;">Les ergomètres et vélos à air que nous entretenons en Île-de-France.</p>
+    <div data-reveal-group style="display:grid;grid-template-columns:repeat(3, 1fr);gap:1rem;" class="specialties-grid">
+      {equipmentModels.map((m) => (
+        <article data-m3d-card={m.glb} data-m3d-label={m.label} style="background:var(--soft);border-radius:4px;padding:1rem 1rem 1.25rem;">
+          <div data-m3d-mount style="aspect-ratio:4/3;border-radius:4px;overflow:hidden;background:radial-gradient(circle at 50% 45%, #ffffff 0%, #e8e8e6 100%);"></div>
+          <p class="display" style="font-size:1.15rem;margin:1rem 0 0;">{m.label}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
   <section style="background:var(--ink);color:#fff;padding:2.5rem 1.5rem;">
     <div data-reveal-group style="max-width:1400px;margin:0 auto;display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;justify-content:center;">
       {equipment.map((e) => (
@@ -95,6 +108,11 @@ const serviceLinks = ['/entretien', '/reparation', '/entretien'];
     @media (max-width: 768px) {
       .services-grid > a { grid-column: span 1 !important; }
       .services-sub { grid-column: span 1 !important; grid-template-columns: 1fr !important; }
+      .specialties-grid { grid-template-columns: 1fr !important; }
+    }
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .specialties-grid { grid-template-columns: repeat(2, 1fr) !important; }
     }
   </style>
+  <script>import '../scripts/models-3d';</script>
 </NikeLayout>
