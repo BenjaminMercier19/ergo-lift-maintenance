@@ -3,17 +3,24 @@ import { Icon } from 'astro-icon/components';
 import { Image } from 'astro:assets';
 import NikeLayout from '../layouts/NikeLayout.astro';
 import bandImg from '../assets/photos/audit-bikeerg-diagnostic.jpg';
+import heroPosterImg from '../assets/photos/hero-entretien-poster.jpg';
 import { entretienPage, equipment, contact, serviceTag } from '../data/content';
+import { withBase } from '../utils/url';
 ---
 
 <NikeLayout
   title="Entretien"
   description="Entretien préventif d'ergomètres Concept 2 et de barres olympiques : nettoyage, lubrification et calendrier de maintenance, directement dans votre salle."
 >
-  <section style="max-width:1400px;margin:0 auto;padding:4rem 1.5rem 3rem;">
-    <div data-hero-in>
+  <section style="position:relative;min-height:88svh;display:flex;align-items:center;overflow:hidden;background:#060606;">
+    <Image src={heroPosterImg} alt="" widths={[640, 960, 1280, 1920]} sizes="100vw" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 32%;filter:saturate(.5) contrast(1.06) brightness(.55);" priority />
+    <video data-hero-video hidden muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 32%;filter:saturate(.5) contrast(1.06) brightness(.55);">
+      <source src={withBase('/media/hero-entretien.mp4')} type="video/mp4" />
+    </video>
+    <div style="position:absolute;inset:0;background:linear-gradient(100deg, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.6) 42%, rgba(0,0,0,0.3) 74%, rgba(0,0,0,0.55) 100%);"></div>
+    <div data-hero-in style="position:relative;max-width:1400px;margin:0 auto;width:100%;padding:0 1.5rem;color:#fff;">
       <h1 class="display" style="font-size:clamp(2.25rem,5vw,3.5rem);max-width:20ch;margin:0 0 1rem;">{entretienPage.heading}</h1>
-      <p style="max-width:60ch;font-size:1.05rem;line-height:1.6;color:var(--charcoal);margin:0;">{entretienPage.intro}</p>
+      <p style="max-width:60ch;font-size:1.05rem;line-height:1.6;color:rgba(255,255,255,0.85);margin:0;">{entretienPage.intro}</p>
     </div>
   </section>
 

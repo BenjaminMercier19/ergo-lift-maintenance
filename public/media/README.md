@@ -1,6 +1,13 @@
-# Hero video (pending)
+# Hero videos
 
-Drop the real clip here once shot, using these exact filenames:
+`hero-entretien.mp4` and `hero-reparation.mp4` are the source site's own
+real footage (owner-authorized reuse), already wired into the
+`/entretien` and `/reparation` hero sections.
+
+## Homepage hero (still pending)
+
+The source site has no video on its homepage, so there is nothing to
+reuse there. Drop a clip here once shot, using these exact filenames:
 
 - `hero.mp4` (H.264, for Safari/most browsers)
 - `hero.webm` (VP9, smaller, for Chrome/Firefox)
