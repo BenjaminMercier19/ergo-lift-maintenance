@@ -1,18 +1,19 @@
 ---
 import '@fontsource/geist-sans/400.css';
 import '@fontsource/geist-sans/600.css';
+import { withBase } from '../utils/url';
 
 const versions = [
-  { name: 'Nike', href: '/preview/nike', desc: 'Photo-first, athlétique, noir & blanc, CTA pilule.' },
-  { name: 'Tesla', href: '/preview/tesla', desc: 'Photographie cinématique, chrome quasi nul, un seul bleu.' },
-  { name: 'Vercel', href: '/preview/vercel', desc: 'Encre sur blanc cassé, bordures fines, technique.' },
+  { name: 'Nike', href: withBase('/preview/nike'), desc: 'Photo-first, athlétique, noir & blanc, CTA pilule.' },
+  { name: 'Tesla', href: withBase('/preview/tesla'), desc: 'Photographie cinématique, chrome quasi nul, un seul bleu.' },
+  { name: 'Vercel', href: withBase('/preview/vercel'), desc: 'Encre sur blanc cassé, bordures fines, technique.' },
 ];
 ---
 
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Ergo&Lift Maintenance · Comparatif</title>
   <style>

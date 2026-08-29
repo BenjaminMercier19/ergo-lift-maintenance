@@ -14,6 +14,7 @@ import serviceImg from '../../assets/photos/entretien-skierg-cordes.jpg';
 import {
   nav, hero, services, serviceTag, contact, serviceArea, testimonial, social, legal,
 } from '../../data/content';
+import { withBase } from '../../utils/url';
 ---
 
 <html lang="fr">
@@ -76,13 +77,13 @@ import {
   </style>
 </head>
 <body>
-  <a href="/" style="position:fixed;top:0.75rem;left:0.75rem;z-index:50;background:#171717;color:#fff;font-size:0.75rem;padding:0.4rem 0.75rem;border-radius:6px;text-decoration:none;">← Comparatif</a>
+  <a href={withBase('/')} style="position:fixed;top:0.75rem;left:0.75rem;z-index:50;background:#171717;color:#fff;font-size:0.75rem;padding:0.4rem 0.75rem;border-radius:6px;text-decoration:none;">← Comparatif</a>
 
   <header style="position:sticky;top:0;z-index:40;background:rgba(255,255,255,0.85);backdrop-filter:blur(8px);border-bottom:1px solid var(--hairline);height:64px;display:flex;align-items:center;">
     <div style="max-width:1200px;margin:0 auto;width:100%;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;">
       <span style="font-weight:700;font-size:1.05rem;">Ergo&amp;Lift</span>
       <nav style="display:flex;align-items:center;gap:1.75rem;">
-        {nav.map((item) => (<a href={item.href} class="navlink" style="color:var(--body);text-decoration:none;font-size:0.9rem;font-weight:500;">{item.label}</a>))}
+        {nav.map((item) => (<a href={withBase(item.href)} class="navlink" style="color:var(--body);text-decoration:none;font-size:0.9rem;font-weight:500;">{item.label}</a>))}
         <a href={contact.phoneHref} class="btn">Demander un devis</a>
       </nav>
     </div>
@@ -164,8 +165,8 @@ import {
       <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:center;font-size:0.82rem;color:var(--mute);border-top:1px solid var(--hairline);padding-top:1.5rem;">
         <span>{legal.copyright}</span>
         <div style="display:flex;gap:1.25rem;flex-wrap:wrap;">
-          <a href="/mentions-legales" class="navlink" style="color:var(--mute);text-decoration:none;">Mentions légales</a>
-          <a href="/cgv" class="navlink" style="color:var(--mute);text-decoration:none;">CGV</a>
+          <a href={withBase('/mentions-legales')} class="navlink" style="color:var(--mute);text-decoration:none;">Mentions légales</a>
+          <a href={withBase('/cgv')} class="navlink" style="color:var(--mute);text-decoration:none;">CGV</a>
           <a href={social.instagram} aria-label="Instagram" style="color:var(--mute);"><Icon name="simple-icons:instagram" style="width:1rem;height:1rem;" /></a>
           <a href={social.linkedin} aria-label="LinkedIn" style="color:var(--mute);"><Icon name="simple-icons:linkedin" style="width:1rem;height:1rem;" /></a>
         </div>

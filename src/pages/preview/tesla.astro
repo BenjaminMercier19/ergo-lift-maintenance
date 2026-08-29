@@ -13,6 +13,7 @@ import bandImg from '../../assets/photos/audit-bikeerg-diagnostic.jpg';
 import {
   nav, hero, services, contact, testimonial, social, legal,
 } from '../../data/content';
+import { withBase } from '../../utils/url';
 
 const blue = '#3E6AE1';
 ---
@@ -66,13 +67,13 @@ const blue = '#3E6AE1';
   </style>
 </head>
 <body>
-  <a href="/" style="position:fixed;top:76px;left:0.75rem;z-index:50;background:#171a20;color:#fff;font-size:0.75rem;padding:0.4rem 0.75rem;border-radius:4px;text-decoration:none;">← Comparatif</a>
+  <a href={withBase('/')} style="position:fixed;top:76px;left:0.75rem;z-index:50;background:#171a20;color:#fff;font-size:0.75rem;padding:0.4rem 0.75rem;border-radius:4px;text-decoration:none;">← Comparatif</a>
 
   <header style="position:fixed;top:0;left:0;right:0;z-index:40;height:64px;display:flex;align-items:center;background:rgba(255,255,255,0.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);">
     <div style="max-width:1400px;margin:0 auto;width:100%;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;">
       <span style="font-weight:600;letter-spacing:0.02em;font-size:1.1rem;">ERGO&amp;LIFT</span>
       <nav style="display:flex;align-items:center;gap:2.25rem;">
-        {nav.map((item) => (<a href={item.href} class="link">{item.label}</a>))}
+        {nav.map((item) => (<a href={withBase(item.href)} class="link">{item.label}</a>))}
       </nav>
     </div>
   </header>
@@ -130,9 +131,9 @@ const blue = '#3E6AE1';
     <div style="max-width:1400px;margin:0 auto;display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:space-between;font-size:0.82rem;color:var(--ink-soft);">
       <span>ERGO&amp;LIFT MAINTENANCE</span>
       <div style="display:flex;gap:1.5rem;flex-wrap:wrap;">
-        {nav.map((item) => (<a href={item.href} class="link" style="color:var(--ink-soft);text-decoration:none;font-size:0.82rem;font-weight:400;">{item.label}</a>))}
-        <a href="/mentions-legales" class="link" style="color:var(--ink-soft);text-decoration:none;font-size:0.82rem;font-weight:400;">Mentions légales</a>
-        <a href="/cgv" class="link" style="color:var(--ink-soft);text-decoration:none;font-size:0.82rem;font-weight:400;">CGV</a>
+        {nav.map((item) => (<a href={withBase(item.href)} class="link" style="color:var(--ink-soft);text-decoration:none;font-size:0.82rem;font-weight:400;">{item.label}</a>))}
+        <a href={withBase('/mentions-legales')} class="link" style="color:var(--ink-soft);text-decoration:none;font-size:0.82rem;font-weight:400;">Mentions légales</a>
+        <a href={withBase('/cgv')} class="link" style="color:var(--ink-soft);text-decoration:none;font-size:0.82rem;font-weight:400;">CGV</a>
       </div>
       <div style="display:flex;gap:0.9rem;">
         <a href={social.instagram} aria-label="Instagram" style="color:var(--ink-soft);"><Icon name="simple-icons:instagram" style="width:1.1rem;height:1.1rem;" /></a>

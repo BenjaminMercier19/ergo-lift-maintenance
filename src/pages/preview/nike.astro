@@ -14,6 +14,7 @@ import bandImg from '../../assets/photos/intervention-banner.jpg';
 import {
   nav, hero, services, serviceTag, equipment, contact, serviceArea, testimonial, social, legal,
 } from '../../data/content';
+import { withBase } from '../../utils/url';
 ---
 
 <html lang="fr">
@@ -71,14 +72,14 @@ import {
   </style>
 </head>
 <body>
-  <a href="/" style="position:fixed;top:84px;left:0.75rem;z-index:50;background:#111;color:#fff;font-size:0.75rem;padding:0.4rem 0.75rem;border-radius:999px;text-decoration:none;">← Comparatif</a>
+  <a href={withBase('/')} style="position:fixed;top:84px;left:0.75rem;z-index:50;background:#111;color:#fff;font-size:0.75rem;padding:0.4rem 0.75rem;border-radius:999px;text-decoration:none;">← Comparatif</a>
 
   <header style="position:sticky;top:0;z-index:40;background:#fff;height:72px;display:flex;align-items:center;">
     <div style="max-width:1400px;margin:0 auto;width:100%;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;">
       <span class="display" style="font-size:1.5rem;">Ergo&amp;Lift</span>
       <nav style="display:flex;align-items:center;gap:2rem;">
         {nav.map((item) => (
-          <a href={item.href} class="navlink" style="color:var(--ink);text-decoration:none;font-weight:500;font-size:0.95rem;">{item.label}</a>
+          <a href={withBase(item.href)} class="navlink" style="color:var(--ink);text-decoration:none;font-weight:500;font-size:0.95rem;">{item.label}</a>
         ))}
         <a href={contact.phoneHref} class="pill pill-ghost-dark" style="padding:0.6rem 1.25rem;font-size:0.85rem;">Appeler</a>
       </nav>
@@ -100,7 +101,7 @@ import {
 
   <section id="services" style="max-width:1400px;margin:0 auto;padding:5rem 1.5rem;">
     <div style="display:grid;grid-template-columns:1fr;gap:1rem;" class="services-grid">
-      <a href="/entretien" style="grid-column:span 2;position:relative;min-height:22rem;border-radius:4px;overflow:hidden;text-decoration:none;color:#fff;display:flex;align-items:flex-end;">
+      <a href={withBase('/entretien')} style="grid-column:span 2;position:relative;min-height:22rem;border-radius:4px;overflow:hidden;text-decoration:none;color:#fff;display:flex;align-items:flex-end;">
         <Image src={serviceImg} alt="Nettoyage des cordes d'un SkiErg" width={1400} height={900} style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />
         <div style="position:absolute;inset:0;background:linear-gradient(0deg, rgba(0,0,0,0.85), transparent 60%);"></div>
         <div style="position:relative;padding:2rem;">
@@ -185,8 +186,8 @@ import {
       <div style="border-top:1px solid rgba(0,0,0,0.1);padding-top:1.5rem;display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;font-size:0.8rem;color:var(--mute);">
         <span>{legal.copyright}</span>
         <div style="display:flex;gap:1.5rem;">
-          <a href="/mentions-legales" class="navlink" style="color:var(--mute);">Mentions légales</a>
-          <a href="/cgv" class="navlink" style="color:var(--mute);">CGV</a>
+          <a href={withBase('/mentions-legales')} class="navlink" style="color:var(--mute);">Mentions légales</a>
+          <a href={withBase('/cgv')} class="navlink" style="color:var(--mute);">CGV</a>
         </div>
       </div>
     </div>
