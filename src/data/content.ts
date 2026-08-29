@@ -100,13 +100,6 @@ export const equipment = [
   'Rogue EchoBike',
 ];
 
-export const equipmentModels = [
-  { label: 'RowErg', glb: '/models/rowerg.glb' },
-  { label: 'SkiErg', glb: '/models/skierg.glb' },
-  { label: 'BikeErg', glb: '/models/bikeerg.glb' },
-  { label: 'Assault AirBike', glb: '/models/assault-airbike.glb' },
-  { label: 'Rogue EchoBike', glb: '/models/rogue-airbike.glb' },
-];
 
 export const faq = [
   {

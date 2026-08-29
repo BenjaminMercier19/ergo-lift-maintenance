@@ -1,5 +1,8 @@
 ---
+import { Icon } from 'astro-icon/components';
+import { Image } from 'astro:assets';
 import NikeLayout from '../layouts/NikeLayout.astro';
+import sideImg from '../assets/photos/hero.jpg';
 import { faq, contact } from '../data/content';
 ---
 
@@ -7,35 +10,48 @@ import { faq, contact } from '../data/content';
   title="FAQ"
   description="Questions fréquentes sur l'entretien et la réparation d'ergomètres Concept 2 et de barres olympiques en Île-de-France."
 >
-  <section style="max-width:900px;margin:0 auto;padding:4rem 1.5rem 5rem;">
+  <section style="max-width:1400px;margin:0 auto;padding:5rem 1.5rem 6rem;">
     <div data-hero-in>
-      <h1 class="display" style="font-size:clamp(2.25rem,5vw,3.5rem);margin:0 0 2.5rem;">Questions fréquentes</h1>
+      <h1 class="display" style="font-size:clamp(2.25rem,5vw,3.5rem);margin:0 0 3rem;">Questions fréquentes</h1>
     </div>
-    <div data-reveal-group>
-      {faq.map((item, i) => (
-        <details data-faq style={`padding:1.5rem 0;${i > 0 ? 'border-top:1px solid rgba(0,0,0,0.1);' : ''}`}>
-          <summary style="cursor:pointer;font-weight:700;font-size:1.1rem;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
-            {item.question}
-            <span aria-hidden="true" style="font-size:1.3rem;font-weight:400;flex-shrink:0;">+</span>
-          </summary>
-          <div class="faq-panel">
-            <p style="color:var(--charcoal);margin:1rem 0 0;line-height:1.6;">{item.answer}</p>
-          </div>
-        </details>
-      ))}
-    </div>
-    <div data-reveal style="margin-top:3rem;padding-top:2rem;border-top:1px solid rgba(0,0,0,0.1);text-align:center;">
-      <p style="color:var(--mute);margin:0 0 1rem;">Une autre question ?</p>
-      <a href={contact.phoneHref} class="pill pill-solid">Appeler {contact.phone}</a>
+    <div style="display:grid;grid-template-columns:1.1fr 0.9fr;gap:4rem;align-items:start;" class="faq-layout">
+      <div>
+        <div data-reveal-group>
+          {faq.map((item, i) => (
+            <details data-faq style={`padding:1.75rem 0;${i > 0 ? 'border-top:1px solid rgba(0,0,0,0.1);' : ''}`}>
+              <summary style="cursor:pointer;font-weight:700;font-size:1.1rem;list-style:none;display:flex;align-items:center;gap:0.85rem;">
+                <Icon name="ph:question" style="width:1.25rem;height:1.25rem;color:var(--mute);flex-shrink:0;" aria-hidden="true" />
+                <span style="flex:1;">{item.question}</span>
+                <span aria-hidden="true" style="font-size:1.3rem;font-weight:400;flex-shrink:0;">+</span>
+              </summary>
+              <div class="faq-panel">
+                <p style="color:var(--charcoal);margin:1rem 0 0 2.1rem;line-height:1.6;">{item.answer}</p>
+              </div>
+            </details>
+          ))}
+        </div>
+        <div data-reveal style="margin-top:3rem;padding-top:2rem;border-top:1px solid rgba(0,0,0,0.1);">
+          <p style="color:var(--mute);margin:0 0 1rem;">Une autre question ?</p>
+          <a href={contact.phoneHref} class="pill pill-solid">Appeler {contact.phone}</a>
+        </div>
+      </div>
+      <div data-reveal class="faq-photo" style="border-radius:4px;overflow:hidden;position:sticky;top:6rem;">
+        <Image src={sideImg} alt="Équipe Ergo&Lift Maintenance" widths={[480, 720, 960]} sizes="(max-width: 900px) 100vw, 500px" style="width:100%;height:100%;object-fit:cover;aspect-ratio:4/5;" />
+      </div>
     </div>
   </section>
 
   <style>
     summary::-webkit-details-marker { display: none; }
-    details[open] summary span { transform: rotate(45deg); }
-    details summary span { transition: transform 0.2s; display: inline-block; }
+    details[open] summary span:last-child { transform: rotate(45deg); }
+    details summary span:last-child { transition: transform 0.2s; display: inline-block; }
     @media (prefers-reduced-motion: reduce) {
-      details summary span { transition: none; }
+      details summary span:last-child { transition: none; }
+    }
+    @media (max-width: 900px) {
+      .faq-layout { grid-template-columns: 1fr !important; }
+      .faq-photo { position: static !important; height: 16rem; }
+      .faq-photo img { aspect-ratio: auto !important; }
     }
   </style>
 </NikeLayout>
