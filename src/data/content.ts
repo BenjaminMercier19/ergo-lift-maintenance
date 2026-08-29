@@ -150,8 +150,8 @@ export const testimonial = {
 };
 
 export const social = {
-  instagram: '#',
-  linkedin: '#',
+  instagram: 'https://www.instagram.com/ergoliftmaintenance',
+  linkedin: 'https://www.linkedin.com/company/ergo-lift-maintenance',
   googleReview: '#',
 };
 
