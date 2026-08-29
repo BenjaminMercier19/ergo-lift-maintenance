@@ -1,0 +1,53 @@
+---
+import NikeLayout from '../layouts/NikeLayout.astro';
+import { legal, contact } from '../data/content';
+---
+
+<NikeLayout
+  title="Mentions légales"
+  description="Mentions légales d'Ergo&Lift Maintenance."
+>
+  <section style="max-width:720px;margin:0 auto;padding:4rem 1.5rem 6rem;">
+    <h1 class="display" style="font-size:clamp(2rem,4.5vw,3rem);margin:0 0 2.5rem;">Mentions légales</h1>
+
+    <div style="display:flex;flex-direction:column;gap:2rem;color:var(--charcoal);line-height:1.7;">
+      <div>
+        <h2 style="font-size:1.05rem;font-weight:700;color:var(--ink);margin:0 0 0.5rem;">Éditeur du site</h2>
+        <p style="margin:0;">
+          {legal.companyName}, entrepreneur individuel (micro-entreprise), représenté par {legal.owner}.<br />
+          SIRET : {legal.siret}<br />
+          SIREN : {legal.siren}<br />
+          {legal.taxNote}
+        </p>
+      </div>
+
+      <div>
+        <h2 style="font-size:1.05rem;font-weight:700;color:var(--ink);margin:0 0 0.5rem;">Contact</h2>
+        <p style="margin:0;">
+          Téléphone : {contact.phone}<br />
+          Email : {contact.email}
+        </p>
+      </div>
+
+      <div>
+        <h2 style="font-size:1.05rem;font-weight:700;color:var(--ink);margin:0 0 0.5rem;">Hébergement</h2>
+        <p style="margin:0;">{legal.hosting.name}, {legal.hosting.address}</p>
+      </div>
+
+      <div>
+        <h2 style="font-size:1.05rem;font-weight:700;color:var(--ink);margin:0 0 0.5rem;">Propriété intellectuelle</h2>
+        <p style="margin:0;">L'ensemble des contenus de ce site (textes, photographies, logo) est la propriété d'Ergo&Lift Maintenance, sauf mention contraire. Toute reproduction sans autorisation est interdite.</p>
+      </div>
+
+      <div>
+        <h2 style="font-size:1.05rem;font-weight:700;color:var(--ink);margin:0 0 0.5rem;">Données personnelles</h2>
+        <p style="margin:0;">Les données transmises via ce site sont utilisées uniquement pour répondre à votre demande. Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données en nous contactant à {contact.email}.</p>
+      </div>
+
+      <div>
+        <h2 style="font-size:1.05rem;font-weight:700;color:var(--ink);margin:0 0 0.5rem;">Droit applicable</h2>
+        <p style="margin:0;">Le présent site est soumis au droit français. En cas de litige, les tribunaux de Paris sont seuls compétents.</p>
+      </div>
+    </div>
+  </section>
+</NikeLayout>

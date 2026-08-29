@@ -1,0 +1,22 @@
+---
+import NikeLayout from '../layouts/NikeLayout.astro';
+import { cgvSections } from '../data/content';
+---
+
+<NikeLayout
+  title="CGV"
+  description="Conditions générales de vente d'Ergo&Lift Maintenance."
+>
+  <section style="max-width:720px;margin:0 auto;padding:4rem 1.5rem 6rem;">
+    <h1 class="display" style="font-size:clamp(2rem,4.5vw,3rem);margin:0 0 2.5rem;">Conditions générales de vente</h1>
+
+    <div style="display:flex;flex-direction:column;gap:2rem;">
+      {cgvSections.map((section, i) => (
+        <div>
+          <h2 style="font-size:1.05rem;font-weight:700;color:var(--ink);margin:0 0 0.5rem;">{i + 1}. {section.title}</h2>
+          <p style="color:var(--charcoal);line-height:1.7;margin:0;">{section.body}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+</NikeLayout>

@@ -1,0 +1,134 @@
+---
+import '@fontsource/bebas-neue';
+import '@fontsource/archivo/400.css';
+import '@fontsource/archivo/500.css';
+import '@fontsource/archivo/700.css';
+import { Icon } from 'astro-icon/components';
+import { nav, contact, legal } from '../data/content';
+import { withBase } from '../utils/url';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const currentPath = new URL(Astro.request.url).pathname;
+---
+
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
+  <meta name="description" content={description} />
+  <title>{title} · Ergo&Lift Maintenance</title>
+  <style is:global>
+    :root {
+      --ink: #111111;
+      --canvas: #ffffff;
+      --soft: #f5f5f5;
+      --charcoal: #39393b;
+      --mute: #707072;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: 'Archivo', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .display {
+      font-family: 'Bebas Neue', 'Archivo', system-ui, sans-serif;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+      line-height: 0.95;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.9rem 1.75rem;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      transition: transform 0.2s cubic-bezier(0.16,1,0.3,1), background 0.2s;
+    }
+    .pill:active { transform: scale(0.97); }
+    .pill-solid { background: var(--ink); color: #fff; }
+    .pill-solid:hover { background: var(--charcoal); }
+    .pill-ghost { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,0.7); }
+    .pill-ghost:hover { border-color: #fff; }
+    .pill-ghost-dark { background: transparent; color: var(--ink); border: 1.5px solid var(--ink); }
+    .pill-ghost-dark:hover { background: var(--ink); color: #fff; }
+    .navlink { transition: opacity 0.15s; position: relative; }
+    .navlink:hover { opacity: 0.6; }
+    .navlink[aria-current="page"] { font-weight: 700; }
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 2px;
+    }
+    #services { scroll-margin-top: 72px; }
+    @media (prefers-reduced-motion: reduce) {
+      .pill, .navlink { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <header style="position:sticky;top:0;z-index:40;background:#fff;height:72px;display:flex;align-items:center;border-bottom:1px solid rgba(0,0,0,0.06);">
+    <div style="max-width:1400px;margin:0 auto;width:100%;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;">
+      <a href={withBase('/')} class="display" style="font-size:1.5rem;color:var(--ink);text-decoration:none;">Ergo&amp;Lift</a>
+      <nav style="display:flex;align-items:center;gap:2rem;">
+        {nav.map((item) => (
+          <a
+            href={withBase(item.href)}
+            class="navlink"
+            aria-current={currentPath === withBase(item.href) ? 'page' : undefined}
+            style="color:var(--ink);text-decoration:none;font-weight:500;font-size:0.95rem;"
+          >{item.label}</a>
+        ))}
+        <a href={contact.phoneHref} class="pill pill-ghost-dark" style="padding:0.6rem 1.25rem;font-size:0.85rem;">Appeler</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <slot />
+  </main>
+
+  <footer style="background:var(--soft);padding:3rem 1.5rem 2rem;">
+    <div style="max-width:1400px;margin:0 auto;">
+      <div style="display:flex;flex-wrap:wrap;gap:2rem;justify-content:space-between;margin-bottom:2rem;">
+        <div>
+          <span class="display" style="font-size:1.35rem;">Ergo&amp;Lift Maintenance</span>
+          <p style="color:var(--mute);font-size:0.9rem;max-width:32ch;margin-top:0.5rem;">Entretien mobile d'ergomètres Concept 2 et de barres olympiques en Île-de-France.</p>
+        </div>
+        <div style="display:flex;gap:3rem;flex-wrap:wrap;">
+          <div>
+            <p style="font-weight:700;font-size:0.85rem;margin:0 0 0.75rem;">Contact</p>
+            <a href={contact.phoneHref} style="display:block;color:var(--charcoal);text-decoration:none;font-size:0.9rem;margin-bottom:0.35rem;">{contact.phone}</a>
+            <a href={`mailto:${contact.email}`} style="display:block;color:var(--charcoal);text-decoration:none;font-size:0.9rem;">{contact.email}</a>
+          </div>
+          <div>
+            <p style="font-weight:700;font-size:0.85rem;margin:0 0 0.75rem;">Suivez-nous</p>
+            <div style="display:flex;gap:0.75rem;">
+              <a href="#" aria-label="Instagram" class="navlink" style="color:var(--ink);"><Icon name="simple-icons:instagram" style="width:1.25rem;height:1.25rem;" aria-hidden="true" /></a>
+              <a href="#" aria-label="LinkedIn" class="navlink" style="color:var(--ink);"><Icon name="simple-icons:linkedin" style="width:1.25rem;height:1.25rem;" aria-hidden="true" /></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(0,0,0,0.1);padding-top:1.5rem;display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;font-size:0.8rem;color:var(--mute);">
+        <span>{legal.copyright}</span>
+        <div style="display:flex;gap:1.5rem;">
+          <a href={withBase('/mentions-legales')} class="navlink" style="color:var(--mute);">Mentions légales</a>
+          <a href={withBase('/cgv')} class="navlink" style="color:var(--mute);">CGV</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
