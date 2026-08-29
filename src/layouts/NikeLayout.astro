@@ -67,6 +67,7 @@ const currentPath = new URL(Astro.request.url).pathname;
     .navlink { transition: opacity 0.15s; position: relative; }
     .navlink:hover { opacity: 0.6; }
     .navlink[aria-current="page"] { font-weight: 700; }
+    a, button { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
     a:focus-visible, button:focus-visible {
       outline: 2px solid var(--ink);
       outline-offset: 2px;
@@ -75,13 +76,65 @@ const currentPath = new URL(Astro.request.url).pathname;
     @media (prefers-reduced-motion: reduce) {
       .pill, .navlink { transition: none; }
     }
+
+    /* Header / mobile menu */
+    .nav-desktop { display: flex; align-items: center; gap: 2rem; }
+    .menu-toggle {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--ink);
+    }
+    .menu-toggle .icon-close { display: none; }
+    .menu-toggle[aria-expanded="true"] .icon-open { display: none; }
+    .menu-toggle[aria-expanded="true"] .icon-close { display: block; }
+    .mobile-menu {
+      position: fixed;
+      top: 72px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 39;
+      background: var(--ink);
+      padding: 1.5rem 1.5rem 2.5rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .mobile-menu[hidden] { display: none; }
+    .mobile-link {
+      font-family: 'Bebas Neue', 'Archivo', system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.01em;
+      color: #fff;
+      text-decoration: none;
+      font-size: 2rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+      display: block;
+    }
+    .mobile-menu .mobile-cta { justify-content: center; margin-top: 1.5rem; }
+    body.menu-open { overflow: hidden; }
+    @media (max-width: 767px) {
+      .nav-desktop { display: none; }
+      .menu-toggle { display: inline-flex; }
+    }
+    @media (min-width: 768px) {
+      .mobile-menu { display: none !important; }
+    }
   </style>
 </head>
 <body>
   <header style="position:sticky;top:0;z-index:40;background:#fff;height:72px;display:flex;align-items:center;border-bottom:1px solid rgba(0,0,0,0.06);">
     <div style="max-width:1400px;margin:0 auto;width:100%;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;">
       <a href={withBase('/')} class="display" style="font-size:1.5rem;color:var(--ink);text-decoration:none;">Ergo&amp;Lift</a>
-      <nav style="display:flex;align-items:center;gap:2rem;">
+      <nav class="nav-desktop" aria-label="Navigation principale">
         {nav.map((item) => (
           <a
             href={withBase(item.href)}
@@ -92,12 +145,65 @@ const currentPath = new URL(Astro.request.url).pathname;
         ))}
         <a href={contact.phoneHref} class="pill pill-ghost-dark" style="padding:0.6rem 1.25rem;font-size:0.85rem;">Appeler</a>
       </nav>
+      <button id="menu-toggle" class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Ouvrir le menu">
+        <Icon name="ph:list" class="icon-open" style="width:1.5rem;height:1.5rem;" aria-hidden="true" />
+        <Icon name="ph:x" class="icon-close" style="width:1.5rem;height:1.5rem;" aria-hidden="true" />
+      </button>
     </div>
   </header>
+
+  <div id="mobile-menu" class="mobile-menu" hidden>
+    <nav aria-label="Navigation mobile">
+      {nav.map((item) => (
+        <a href={withBase(item.href)} class="mobile-link" aria-current={currentPath === withBase(item.href) ? 'page' : undefined}>{item.label}</a>
+      ))}
+    </nav>
+    <a href={contact.phoneHref} class="pill mobile-cta" style="background:#fff;color:var(--ink);">Appeler {contact.phone}</a>
+    <a href={`mailto:${contact.email}`} class="pill pill-ghost mobile-cta" style="color:#fff;border:1.5px solid rgba(255,255,255,0.7);margin-top:0.75rem;">Envoyer un email</a>
+  </div>
 
   <main>
     <slot />
   </main>
+
+  <script>
+    const toggle = document.getElementById('menu-toggle')!;
+    const menu = document.getElementById('mobile-menu')!;
+    const pageContent = [document.querySelector('main')!, document.querySelector('footer')!];
+
+    function closeMenu() {
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Ouvrir le menu');
+      menu.hidden = true;
+      document.body.classList.remove('menu-open');
+      pageContent.forEach((el) => el.removeAttribute('inert'));
+    }
+
+    function openMenu() {
+      toggle.setAttribute('aria-expanded', 'true');
+      toggle.setAttribute('aria-label', 'Fermer le menu');
+      menu.hidden = false;
+      document.body.classList.add('menu-open');
+      pageContent.forEach((el) => el.setAttribute('inert', ''));
+    }
+
+    toggle.addEventListener('click', () => {
+      const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+      if (isOpen) closeMenu(); else openMenu();
+    });
+
+    menu.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).tagName === 'A') closeMenu();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMenu();
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 768) closeMenu();
+    });
+  </script>
 
   <footer style="background:var(--soft);padding:3rem 1.5rem 2rem;">
     <div style="max-width:1400px;margin:0 auto;">
@@ -109,23 +215,23 @@ const currentPath = new URL(Astro.request.url).pathname;
         <div style="display:flex;gap:3rem;flex-wrap:wrap;">
           <div>
             <p style="font-weight:700;font-size:0.85rem;margin:0 0 0.75rem;">Contact</p>
-            <a href={contact.phoneHref} style="display:block;color:var(--charcoal);text-decoration:none;font-size:0.9rem;margin-bottom:0.35rem;">{contact.phone}</a>
-            <a href={`mailto:${contact.email}`} style="display:block;color:var(--charcoal);text-decoration:none;font-size:0.9rem;">{contact.email}</a>
+            <a href={contact.phoneHref} style="display:inline-block;color:var(--charcoal);text-decoration:none;font-size:0.9rem;padding:0.95rem 0;margin:-0.95rem 0 0;">{contact.phone}</a><br />
+            <a href={`mailto:${contact.email}`} style="display:inline-block;color:var(--charcoal);text-decoration:none;font-size:0.9rem;padding:0.95rem 0;">{contact.email}</a>
           </div>
           <div>
             <p style="font-weight:700;font-size:0.85rem;margin:0 0 0.75rem;">Suivez-nous</p>
-            <div style="display:flex;gap:0.75rem;">
-              <a href="#" aria-label="Instagram" class="navlink" style="color:var(--ink);"><Icon name="simple-icons:instagram" style="width:1.25rem;height:1.25rem;" aria-hidden="true" /></a>
-              <a href="#" aria-label="LinkedIn" class="navlink" style="color:var(--ink);"><Icon name="simple-icons:linkedin" style="width:1.25rem;height:1.25rem;" aria-hidden="true" /></a>
+            <div style="display:flex;gap:0.25rem;margin-left:-0.75rem;">
+              <a href="#" aria-label="Instagram" class="navlink" style="color:var(--ink);display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;"><Icon name="simple-icons:instagram" style="width:1.25rem;height:1.25rem;" aria-hidden="true" /></a>
+              <a href="#" aria-label="LinkedIn" class="navlink" style="color:var(--ink);display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;"><Icon name="simple-icons:linkedin" style="width:1.25rem;height:1.25rem;" aria-hidden="true" /></a>
             </div>
           </div>
         </div>
       </div>
       <div style="border-top:1px solid rgba(0,0,0,0.1);padding-top:1.5rem;display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;font-size:0.8rem;color:var(--mute);">
         <span>{legal.copyright}</span>
-        <div style="display:flex;gap:1.5rem;">
-          <a href={withBase('/mentions-legales')} class="navlink" style="color:var(--mute);">Mentions légales</a>
-          <a href={withBase('/cgv')} class="navlink" style="color:var(--mute);">CGV</a>
+        <div style="display:flex;gap:1rem;">
+          <a href={withBase('/mentions-legales')} class="navlink" style="color:var(--mute);display:inline-block;padding:0.95rem 0;margin:-0.95rem 0;">Mentions légales</a>
+          <a href={withBase('/cgv')} class="navlink" style="color:var(--mute);display:inline-block;padding:0.95rem 0;margin:-0.95rem 0;">CGV</a>
         </div>
       </div>
     </div>

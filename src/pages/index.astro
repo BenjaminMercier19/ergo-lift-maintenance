@@ -18,7 +18,7 @@ const serviceLinks = ['/entretien', '/reparation', '/entretien'];
   description="Entretien et réparation mobile d'ergomètres Concept 2 et de barres olympiques en Île-de-France. Intervention sous 48h, devis gratuit."
 >
   <section style="position:relative;min-height:100dvh;display:flex;align-items:flex-end;overflow:hidden;">
-    <Image src={heroImg} alt="Équipe Ergo&Lift en intervention sur des rameurs Concept 2" width={1920} height={1280} style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" priority />
+    <Image src={heroImg} alt="Équipe Ergo&Lift en intervention sur des rameurs Concept 2" widths={[640, 960, 1280, 1920]} sizes="100vw" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" priority />
     <div style="position:absolute;inset:0;background:linear-gradient(0deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.35) 45%, rgba(0,0,0,0.1) 70%, transparent 100%);"></div>
     <div style="position:relative;max-width:1400px;margin:0 auto;width:100%;padding:0 1.5rem 4rem;color:#fff;">
       <h1 class="display" style="font-size:clamp(2.5rem, 5.5vw, 4.25rem);max-width:26ch;margin:0 0 1rem;">{hero.headline}</h1>
@@ -33,7 +33,7 @@ const serviceLinks = ['/entretien', '/reparation', '/entretien'];
   <section id="services" style="max-width:1400px;margin:0 auto;padding:5rem 1.5rem;">
     <div style="display:grid;grid-template-columns:1fr;gap:1rem;" class="services-grid">
       <a href={withBase(serviceLinks[0])} style="grid-column:span 2;position:relative;min-height:22rem;border-radius:4px;overflow:hidden;text-decoration:none;color:#fff;display:flex;align-items:flex-end;">
-        <Image src={serviceImg} alt="Nettoyage des cordes d'un SkiErg" width={1400} height={900} style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />
+        <Image src={serviceImg} alt="Nettoyage des cordes d'un SkiErg" widths={[640, 960, 1400]} sizes="(max-width: 768px) 100vw, 700px" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />
         <div style="position:absolute;inset:0;background:linear-gradient(0deg, rgba(0,0,0,0.85), transparent 60%);"></div>
         <div style="position:relative;padding:2rem;">
           <Icon name="ph:wrench" style="width:2rem;height:2rem;color:#fff;margin-bottom:0.75rem;" aria-hidden="true" />
@@ -76,7 +76,7 @@ const serviceLinks = ['/entretien', '/reparation', '/entretien'];
   </section>
 
   <section style="position:relative;padding:6rem 1.5rem;overflow:hidden;">
-    <Image src={bandImg} alt="Intervention Ergo&Lift en salle" width={1920} height={900} style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />
+    <Image src={bandImg} alt="Intervention Ergo&Lift en salle" widths={[640, 960, 1280, 1920]} sizes="100vw" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />
     <div style="position:absolute;inset:0;background:rgba(0,0,0,0.6);"></div>
     <div style="position:relative;max-width:1400px;margin:0 auto;text-align:center;color:#fff;">
       <h2 class="display" style="font-size:clamp(2rem,5vw,3.5rem);margin:0 0 1.5rem;">Prêt à passer à l'action ?</h2>
