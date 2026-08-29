@@ -1,0 +1,59 @@
+---
+import '@fontsource/geist-sans/400.css';
+import '@fontsource/geist-sans/600.css';
+
+const versions = [
+  { name: 'Nike', href: '/preview/nike', desc: 'Photo-first, athlétique, noir & blanc, CTA pilule.' },
+  { name: 'Tesla', href: '/preview/tesla', desc: 'Photographie cinématique, chrome quasi nul, un seul bleu.' },
+  { name: 'Vercel', href: '/preview/vercel', desc: 'Encre sur blanc cassé, bordures fines, technique.' },
+];
+---
+
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ergo&Lift Maintenance · Comparatif</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fafafa;
+      color: #171717;
+      font-family: 'Geist Sans', system-ui, sans-serif;
+    }
+    .wrap { max-width: 720px; padding: 3rem 1.5rem; }
+    h1 { font-size: 1.75rem; font-weight: 600; margin: 0 0 0.5rem; }
+    p.lead { color: #666; margin: 0 0 2rem; }
+    .card {
+      display: block;
+      border: 1px solid #ebebeb;
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 0.85rem;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.15s;
+    }
+    .card:hover { border-color: #c9c9c9; }
+    .card h2 { font-size: 1.1rem; margin: 0 0 0.25rem; }
+    .card p { font-size: 0.9rem; color: #666; margin: 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Ergo&amp;Lift Maintenance</h1>
+    <p class="lead">Trois directions visuelles comparatives pour la home. Choisis celle à développer en site complet.</p>
+    {versions.map((v) => (
+      <a class="card" href={v.href}>
+        <h2>{v.name}</h2>
+        <p>{v.desc}</p>
+      </a>
+    ))}
+  </div>
+</body>
+</html>

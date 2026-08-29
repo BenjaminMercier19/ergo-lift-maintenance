@@ -64,3 +64,19 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+
+---
+
+## Development (Astro)
+
+This project uses Node 22 via nvm (`source ~/.nvm/nvm.sh && nvm use 22`) — the system default Node (20.17) is too old for the Astro CLI.
+
+When starting the dev server, use background mode:
+
+```
+astro dev --background
+```
+
+Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
+
+Full documentation: https://docs.astro.build
