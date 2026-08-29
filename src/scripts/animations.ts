@@ -91,6 +91,34 @@ if (!reduceMotion) {
   });
 }
 
+// Exploded-view diagram: pieces are authored in their assembled position;
+// on desktop only, a pinned+scrubbed timeline moves each [data-piece] to
+// its absolute data-x/data-y offset as the section scrolls through. On
+// mobile or reduced motion the bar simply stays assembled (the [data-reveal]
+// handler above already fades the whole container in).
+if (!reduceMotion && window.matchMedia('(min-width: 768px)').matches) {
+  document.querySelectorAll<HTMLElement>('[data-barbell]').forEach((container) => {
+    const pieces = gsap.utils.toArray<SVGGElement>('[data-piece]', container);
+    if (!pieces.length) return;
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: container,
+        start: 'top top',
+        end: '+=900',
+        pin: true,
+        scrub: 0.6,
+      },
+    });
+
+    pieces.forEach((piece) => {
+      const x = Number(piece.dataset.x || 0);
+      const y = Number(piece.dataset.y || 0);
+      tl.to(piece, { x, y, ease: 'none' }, 0);
+    });
+  });
+}
+
 // FAQ accordion: keep native <details>/<summary> semantics (keyboard and
 // screen-reader behavior untouched) but animate the panel height instead
 // of the native instant show/hide. Skipped entirely under reduced motion.
