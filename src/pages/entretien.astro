@@ -11,16 +11,18 @@ import { entretienPage, equipment, contact, serviceTag } from '../data/content';
   description="Entretien préventif d'ergomètres Concept 2 et de barres olympiques : nettoyage, lubrification et calendrier de maintenance, directement dans votre salle."
 >
   <section style="max-width:1400px;margin:0 auto;padding:4rem 1.5rem 3rem;">
-    <h1 class="display" style="font-size:clamp(2.25rem,5vw,3.5rem);max-width:20ch;margin:0 0 1rem;">{entretienPage.heading}</h1>
-    <p style="max-width:60ch;font-size:1.05rem;line-height:1.6;color:var(--charcoal);margin:0;">{entretienPage.intro}</p>
+    <div data-hero-in>
+      <h1 class="display" style="font-size:clamp(2.25rem,5vw,3.5rem);max-width:20ch;margin:0 0 1rem;">{entretienPage.heading}</h1>
+      <p style="max-width:60ch;font-size:1.05rem;line-height:1.6;color:var(--charcoal);margin:0;">{entretienPage.intro}</p>
+    </div>
   </section>
 
   <section style="position:relative;height:40vh;min-height:20rem;overflow:hidden;">
-    <Image src={bandImg} alt="Diagnostic technique d'un BikeErg" widths={[640, 960, 1280, 1920]} sizes="100vw" style="width:100%;height:100%;object-fit:cover;" />
+    <Image src={bandImg} alt="Diagnostic technique d'un BikeErg" widths={[640, 960, 1280, 1920]} sizes="100vw" style="position:absolute;top:-12%;left:0;width:100%;height:124%;object-fit:cover;" data-parallax />
   </section>
 
   <section style="max-width:1400px;margin:0 auto;padding:4rem 1.5rem;">
-    <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:1rem;" class="includes-grid">
+    <div data-reveal-group style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:1rem;" class="includes-grid">
       {entretienPage.includes.map((item, i) => (
         <div style={`background:var(--soft);border-radius:4px;padding:2rem;${i === 0 ? 'grid-row:span 2;' : ''}`}>
           <Icon name={item.icon} style="width:1.75rem;height:1.75rem;color:var(--ink);margin-bottom:0.75rem;" aria-hidden="true" />
@@ -33,14 +35,14 @@ import { entretienPage, equipment, contact, serviceTag } from '../data/content';
   </section>
 
   <section style="background:var(--ink);color:#fff;padding:2.5rem 1.5rem;">
-    <div style="max-width:1400px;margin:0 auto;display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;justify-content:center;">
+    <div data-reveal-group style="max-width:1400px;margin:0 auto;display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;justify-content:center;">
       {equipment.map((e) => (
         <span style="border:1px solid rgba(255,255,255,0.3);border-radius:999px;padding:0.5rem 1.1rem;font-size:0.85rem;font-weight:500;">{e}</span>
       ))}
     </div>
   </section>
 
-  <section style="max-width:900px;margin:0 auto;padding:5rem 1.5rem;text-align:center;">
+  <section data-reveal style="max-width:900px;margin:0 auto;padding:5rem 1.5rem;text-align:center;">
     <h2 class="display" style="font-size:2rem;margin:0 0 1.5rem;">Planifier un entretien</h2>
     <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
       <a href={contact.phoneHref} class="pill pill-solid">Appeler {contact.phone}</a>

@@ -12,16 +12,18 @@ import { withBase } from '../utils/url';
   description="Réparation mobile d'ergomètres Concept 2 et de barres olympiques en Île-de-France : diagnostic gratuit, devis avant intervention, réparation sous 48h."
 >
   <section style="max-width:1400px;margin:0 auto;padding:4rem 1.5rem 3rem;">
-    <h1 class="display" style="font-size:clamp(2.25rem,5vw,3.5rem);max-width:20ch;margin:0 0 1rem;">{reparationPage.heading}</h1>
-    <p style="max-width:60ch;font-size:1.05rem;line-height:1.6;color:var(--charcoal);margin:0;">{reparationPage.intro}</p>
+    <div data-hero-in>
+      <h1 class="display" style="font-size:clamp(2.25rem,5vw,3.5rem);max-width:20ch;margin:0 0 1rem;">{reparationPage.heading}</h1>
+      <p style="max-width:60ch;font-size:1.05rem;line-height:1.6;color:var(--charcoal);margin:0;">{reparationPage.intro}</p>
+    </div>
   </section>
 
   <section style="position:relative;height:40vh;min-height:20rem;overflow:hidden;">
-    <Image src={bandImg} alt="Intervention Ergo&Lift en salle" widths={[640, 960, 1280, 1920]} sizes="100vw" style="width:100%;height:100%;object-fit:cover;" />
+    <Image src={bandImg} alt="Intervention Ergo&Lift en salle" widths={[640, 960, 1280, 1920]} sizes="100vw" style="position:absolute;top:-12%;left:0;width:100%;height:124%;object-fit:cover;" data-parallax />
   </section>
 
   <section style="max-width:1400px;margin:0 auto;padding:4rem 1.5rem;">
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;" class="includes-grid">
+    <div data-reveal-group style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;" class="includes-grid">
       {reparationPage.includes.map((item) => (
         <div style="background:var(--soft);border-radius:4px;padding:2rem;">
           <Icon name={item.icon} style="width:1.75rem;height:1.75rem;color:var(--ink);margin-bottom:0.75rem;" aria-hidden="true" />
@@ -34,7 +36,7 @@ import { withBase } from '../utils/url';
   </section>
 
   <section style="max-width:900px;margin:0 auto;padding:0 1.5rem 5rem;">
-    <div style="border:1px solid rgba(0,0,0,0.1);border-radius:4px;padding:2rem;display:flex;flex-wrap:wrap;gap:2rem;justify-content:space-around;text-align:center;">
+    <div data-reveal style="border:1px solid rgba(0,0,0,0.1);border-radius:4px;padding:2rem;display:flex;flex-wrap:wrap;gap:2rem;justify-content:space-around;text-align:center;">
       <div>
         <p class="display" style="font-size:1.75rem;margin:0;">{pricing.repair}</p>
         <p style="color:var(--mute);font-size:0.85rem;margin:0.25rem 0 0;">Main d'œuvre</p>
@@ -51,7 +53,7 @@ import { withBase } from '../utils/url';
     <p style="text-align:center;color:var(--mute);font-size:0.8rem;margin-top:1rem;">Détail complet des tarifs dans nos <a href={withBase('/cgv')} style="color:var(--mute);">CGV</a>.</p>
   </section>
 
-  <section style="max-width:900px;margin:0 auto;padding:0 1.5rem 6rem;text-align:center;">
+  <section data-reveal style="max-width:900px;margin:0 auto;padding:0 1.5rem 6rem;text-align:center;">
     <h2 class="display" style="font-size:2rem;margin:0 0 1.5rem;">Un équipement en panne ?</h2>
     <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
       <a href={contact.phoneHref} class="pill pill-solid">Appeler {contact.phone}</a>

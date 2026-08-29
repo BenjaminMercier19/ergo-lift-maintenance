@@ -8,19 +8,23 @@ import { faq, contact } from '../data/content';
   description="Questions fréquentes sur l'entretien et la réparation d'ergomètres Concept 2 et de barres olympiques en Île-de-France."
 >
   <section style="max-width:900px;margin:0 auto;padding:4rem 1.5rem 5rem;">
-    <h1 class="display" style="font-size:clamp(2.25rem,5vw,3.5rem);margin:0 0 2.5rem;">Questions fréquentes</h1>
-    <div>
+    <div data-hero-in>
+      <h1 class="display" style="font-size:clamp(2.25rem,5vw,3.5rem);margin:0 0 2.5rem;">Questions fréquentes</h1>
+    </div>
+    <div data-reveal-group>
       {faq.map((item, i) => (
-        <details style={`padding:1.5rem 0;${i > 0 ? 'border-top:1px solid rgba(0,0,0,0.1);' : ''}`}>
+        <details data-faq style={`padding:1.5rem 0;${i > 0 ? 'border-top:1px solid rgba(0,0,0,0.1);' : ''}`}>
           <summary style="cursor:pointer;font-weight:700;font-size:1.1rem;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
             {item.question}
             <span aria-hidden="true" style="font-size:1.3rem;font-weight:400;flex-shrink:0;">+</span>
           </summary>
-          <p style="color:var(--charcoal);margin:1rem 0 0;line-height:1.6;">{item.answer}</p>
+          <div class="faq-panel">
+            <p style="color:var(--charcoal);margin:1rem 0 0;line-height:1.6;">{item.answer}</p>
+          </div>
         </details>
       ))}
     </div>
-    <div style="margin-top:3rem;padding-top:2rem;border-top:1px solid rgba(0,0,0,0.1);text-align:center;">
+    <div data-reveal style="margin-top:3rem;padding-top:2rem;border-top:1px solid rgba(0,0,0,0.1);text-align:center;">
       <p style="color:var(--mute);margin:0 0 1rem;">Une autre question ?</p>
       <a href={contact.phoneHref} class="pill pill-solid">Appeler {contact.phone}</a>
     </div>

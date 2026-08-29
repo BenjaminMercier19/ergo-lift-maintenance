@@ -11,10 +11,12 @@ const prefilledEmail = `mailto:${contact.email}?subject=${encodeURIComponent('De
   description="Contactez Ergo&Lift Maintenance pour une demande de devis d'entretien ou de réparation d'ergomètres Concept 2 en Île-de-France."
 >
   <section style="max-width:1100px;margin:0 auto;padding:4rem 1.5rem 5rem;">
-    <h1 class="display" style="font-size:clamp(2.25rem,5vw,3.5rem);margin:0 0 1rem;">Parlons de votre salle</h1>
-    <p style="max-width:55ch;font-size:1.05rem;line-height:1.6;color:var(--charcoal);margin:0 0 3rem;">Un appel ou un email suffit pour lancer une demande de devis gratuit. On vous répond sous 24h.</p>
+    <div data-hero-in>
+      <h1 class="display" style="font-size:clamp(2.25rem,5vw,3.5rem);margin:0 0 1rem;">Parlons de votre salle</h1>
+      <p style="max-width:55ch;font-size:1.05rem;line-height:1.6;color:var(--charcoal);margin:0 0 3rem;">Un appel ou un email suffit pour lancer une demande de devis gratuit. On vous répond sous 24h.</p>
+    </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;" class="contact-grid">
+    <div data-reveal-group style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;" class="contact-grid">
       <a href={contact.phoneHref} style="background:var(--ink);color:#fff;border-radius:4px;padding:2.5rem;text-decoration:none;display:block;">
         <Icon name="ph:phone" style="width:2rem;height:2rem;margin-bottom:1rem;" aria-hidden="true" />
         <p style="font-weight:700;font-size:0.85rem;margin:0 0 0.5rem;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.6);">Téléphone</p>
@@ -29,7 +31,7 @@ const prefilledEmail = `mailto:${contact.email}?subject=${encodeURIComponent('De
 
     <p style="color:var(--mute);font-size:0.85rem;margin-top:2rem;">{contact.responseTime}. Un formulaire de demande de devis en ligne arrive bientôt.</p>
 
-    <div style="margin-top:3rem;padding-top:2rem;border-top:1px solid rgba(0,0,0,0.1);">
+    <div data-reveal style="margin-top:3rem;padding-top:2rem;border-top:1px solid rgba(0,0,0,0.1);">
       <p style="font-weight:700;font-size:0.85rem;margin:0 0 1rem;">Zone d'intervention</p>
       <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
         {serviceArea.map((z) => (
