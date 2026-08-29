@@ -1,0 +1,102 @@
+---
+import { Icon } from 'astro-icon/components';
+import { Image } from 'astro:assets';
+import NikeLayout from '../layouts/NikeLayout.astro';
+import entretienBandImg from '../assets/photos/audit-bikeerg-diagnostic.jpg';
+import reparationBandImg from '../assets/photos/intervention-banner.jpg';
+import heroPosterImg from '../assets/photos/hero-entretien-poster.jpg';
+import { servicesPage, contact, serviceTag } from '../data/content';
+import { withBase } from '../utils/url';
+
+const bandImages: Record<string, ImageMetadata> = {
+  entretien: entretienBandImg,
+  reparation: reparationBandImg,
+};
+---
+
+<NikeLayout
+  title="Services"
+  description="Entretien préventif et réparation mobile d'ergomètres Concept 2 et de barres olympiques en Île-de-France : diagnostic gratuit, devis avant intervention, intervention sous 48h."
+>
+  <section style="position:relative;min-height:88svh;display:flex;align-items:center;overflow:hidden;background:#060606;">
+    <Image src={heroPosterImg} alt="" widths={[640, 960, 1280, 1920]} sizes="100vw" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 32%;filter:saturate(.5) contrast(1.06) brightness(.55);" priority />
+    <video data-hero-video hidden muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 32%;filter:saturate(.5) contrast(1.06) brightness(.55);">
+      <source src={withBase('/media/hero-entretien.mp4')} type="video/mp4" />
+    </video>
+    <div style="position:absolute;inset:0;background:linear-gradient(100deg, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.6) 42%, rgba(0,0,0,0.3) 74%, rgba(0,0,0,0.55) 100%);"></div>
+    <div data-hero-in style="position:relative;max-width:1400px;margin:0 auto;width:100%;padding:0 1.5rem;color:#fff;">
+      <h1 class="display" style="font-size:clamp(2.25rem,5vw,3.5rem);max-width:22ch;margin:0 0 1rem;">{servicesPage.heading}</h1>
+      <p style="max-width:60ch;font-size:1.05rem;line-height:1.6;color:rgba(255,255,255,0.85);margin:0;">{servicesPage.intro}</p>
+    </div>
+  </section>
+
+  <section style="background:var(--soft);padding:2.5rem 1.5rem;">
+    <div data-reveal-group style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(3, 1fr);gap:1.5rem;text-align:center;">
+      {servicesPage.stats.map((s) => (
+        <div>
+          <p class="display" style="font-size:1.75rem;margin:0;">{s.value}</p>
+          <p style="color:var(--mute);font-size:0.85rem;margin:0.25rem 0 0;">{s.label}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section style="max-width:1400px;margin:0 auto;padding:4rem 1.5rem 0;">
+    <div role="tablist" aria-label="Type de service" data-tabs style="display:flex;gap:0.75rem;justify-content:center;margin-bottom:0.5rem;">
+      {servicesPage.tabs.map((tab, i) => (
+        <button
+          type="button"
+          role="tab"
+          id={`tab-${tab.id}`}
+          aria-controls={`panel-${tab.id}`}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          data-tab-trigger={tab.id}
+          class="pill"
+          style={`border:1px solid var(--ink);background:${i === 0 ? 'var(--ink)' : 'transparent'};color:${i === 0 ? '#fff' : 'var(--ink)'};cursor:pointer;font:inherit;`}
+        >
+          {tab.label}
+        </button>
+      ))}
+    </div>
+  </section>
+
+  {servicesPage.tabs.map((tab, i) => (
+    <div id={`panel-${tab.id}`} role="tabpanel" aria-labelledby={`tab-${tab.id}`} data-tab-panel={tab.id} hidden={i !== 0}>
+      <section style="position:relative;height:40vh;min-height:20rem;overflow:hidden;margin-top:3rem;">
+        <Image src={bandImages[tab.id]} alt="" widths={[640, 960, 1280, 1920]} sizes="100vw" style="position:absolute;top:-12%;left:0;width:100%;height:124%;object-fit:cover;" data-parallax />
+      </section>
+
+      <section style="max-width:1400px;margin:0 auto;padding:4rem 1.5rem;">
+        <div data-reveal-group style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;" class="includes-grid">
+          {tab.includes.map((item, j) => (
+            <div style={`background:var(--soft);border-radius:4px;${j === 0 ? 'padding:2.5rem;grid-column:span 2;' : 'padding:2rem;'}`}>
+              <Icon name={item.icon} style={`color:var(--ink);margin-bottom:0.75rem;${j === 0 ? 'width:2.25rem;height:2.25rem;' : 'width:1.75rem;height:1.75rem;'}`} aria-hidden="true" />
+              <h2 class="display" style={`margin:0 0 0.5rem;${j === 0 ? 'font-size:1.75rem;' : 'font-size:1.4rem;'}`}>{item.title}</h2>
+              <p style="color:var(--charcoal);margin:0;font-size:0.95rem;max-width:50ch;">{item.description}</p>
+            </div>
+          ))}
+        </div>
+        <p style="margin-top:1.5rem;font-weight:700;font-size:0.95rem;">{serviceTag}</p>
+        {tab.id === 'reparation' && (
+          <p style="margin-top:0.5rem;color:var(--mute);font-size:0.85rem;">Détail complet des tarifs sur notre page <a href={withBase('/tarifs')} style="color:var(--mute);">Tarifs</a>.</p>
+        )}
+      </section>
+    </div>
+  ))}
+
+  <section data-reveal style="max-width:900px;margin:0 auto;padding:2rem 1.5rem 6rem;text-align:center;">
+    <h2 class="display" style="font-size:2rem;margin:0 0 1.5rem;">Un besoin d'entretien ou une panne ?</h2>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+      <a href={contact.phoneHref} class="pill pill-solid">Appeler {contact.phone}</a>
+      <a href={`mailto:${contact.email}`} class="pill pill-ghost-dark">Envoyer un email</a>
+    </div>
+  </section>
+
+  <style>
+    @media (max-width: 768px) {
+      .includes-grid { grid-template-columns: 1fr !important; }
+      .includes-grid > div { grid-column: span 1 !important; }
+    }
+  </style>
+  <script>import '../scripts/services-tabs';</script>
+</NikeLayout>

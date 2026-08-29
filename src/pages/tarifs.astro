@@ -1,0 +1,55 @@
+---
+import NikeLayout from '../layouts/NikeLayout.astro';
+import { pricing, legal, contact } from '../data/content';
+import { withBase } from '../utils/url';
+
+const tiers = [
+  { label: 'Nettoyage ergomètre', value: pricing.cleaning, description: 'RowErg, SkiErg, BikeErg : nettoyage complet, lubrification et contrôle du moniteur.' },
+  { label: 'Réparation', value: pricing.repair, description: "Main d'œuvre, sur place. Pièces facturées séparément, toujours devisées avant intervention." },
+  { label: 'Audit et contrat annuel', value: pricing.audit, description: "Diagnostic de parc et calendrier de maintenance préventive sur mesure." },
+];
+---
+
+<NikeLayout
+  title="Tarifs"
+  description="Tarifs d'entretien et de réparation d'ergomètres Concept 2 et de barres olympiques en Île-de-France : nettoyage, réparation, audit de parc."
+>
+  <section style="max-width:1400px;margin:0 auto;padding:5rem 1.5rem 3rem;">
+    <div data-hero-in>
+      <h1 class="display" style="font-size:clamp(2.25rem,5vw,3.5rem);margin:0 0 1rem;">Tarifs</h1>
+      <p style="max-width:55ch;font-size:1.05rem;line-height:1.6;color:var(--charcoal);margin:0;">Des tarifs simples, sans surprise. Chaque intervention est devisée gratuitement avant confirmation.</p>
+    </div>
+  </section>
+
+  <section style="max-width:1400px;margin:0 auto;padding:0 1.5rem 4rem;">
+    <div data-reveal-group style="display:grid;grid-template-columns:repeat(3, 1fr);gap:1rem;" class="tarifs-grid">
+      {tiers.map((tier) => (
+        <div style="border:1px solid rgba(0,0,0,0.1);border-radius:4px;padding:2rem;">
+          <p style="font-weight:700;font-size:0.85rem;color:var(--mute);text-transform:uppercase;letter-spacing:0.05em;margin:0 0 0.75rem;">{tier.label}</p>
+          <p class="display" style="font-size:1.75rem;margin:0 0 0.75rem;">{tier.value}</p>
+          <p style="color:var(--charcoal);font-size:0.9rem;margin:0;">{tier.description}</p>
+        </div>
+      ))}
+    </div>
+
+    <div data-reveal style="margin-top:2rem;padding-top:2rem;border-top:1px solid rgba(0,0,0,0.1);display:flex;flex-wrap:wrap;gap:2rem;align-items:baseline;">
+      <p style="margin:0;"><strong>Délai d'intervention :</strong> <span style="color:var(--mute);">{pricing.delay}</span></p>
+      <p style="margin:0;color:var(--mute);font-size:0.9rem;">{legal.taxNote}</p>
+    </div>
+    <p style="margin-top:1.5rem;color:var(--mute);font-size:0.85rem;">Conditions complètes dans nos <a href={withBase('/cgv')} style="color:var(--mute);">CGV</a>.</p>
+  </section>
+
+  <section data-reveal style="max-width:900px;margin:0 auto;padding:2rem 1.5rem 6rem;text-align:center;">
+    <h2 class="display" style="font-size:2rem;margin:0 0 1.5rem;">Une question sur nos tarifs ?</h2>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+      <a href={contact.phoneHref} class="pill pill-solid">Appeler {contact.phone}</a>
+      <a href={`mailto:${contact.email}`} class="pill pill-ghost-dark">Envoyer un email</a>
+    </div>
+  </section>
+
+  <style>
+    @media (max-width: 768px) {
+      .tarifs-grid { grid-template-columns: 1fr !important; }
+    }
+  </style>
+</NikeLayout>

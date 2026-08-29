@@ -1,8 +1,9 @@
 // Single featured 3D model ("Nos spécialités" on the homepage). Desktop:
-// the section pins briefly while scroll drives a full 360° spin via
-// model-viewer's cameraOrbit. Mobile and reduced-motion just reveal the
-// model with its own gentle auto-rotate, no pin - same trade-off already
-// used for the parallax bands and the exploded-view experiment.
+// as the section passes through the viewport, scroll drives a partial spin
+// via model-viewer's cameraOrbit - no pin, the page keeps scrolling normally
+// (same scrub-without-pin pattern already used for the parallax image bands
+// in animations.ts). Mobile and reduced-motion just reveal the model with
+// its own gentle auto-rotate.
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { withBase } from '../utils/url';
@@ -60,14 +61,13 @@ if (container && mount) {
 
         const spin = { azimuth: 0 };
         gsap.to(spin, {
-          azimuth: 360,
+          azimuth: 220,
           ease: 'none',
           scrollTrigger: {
             trigger: container,
-            start: 'top top',
-            end: '+=800',
-            pin: true,
-            scrub: 0.5,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1,
           },
           onUpdate: () => {
             viewer.cameraOrbit = `${spin.azimuth}deg 74deg auto`;

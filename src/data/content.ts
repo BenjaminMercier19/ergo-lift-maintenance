@@ -2,8 +2,8 @@
 // Copywriting retravaillé à partir de reference/content-inventory.md (site actuel).
 
 export const nav = [
-  { label: 'Entretien', href: '/entretien' },
-  { label: 'Réparation', href: '/reparation' },
+  { label: 'Services', href: '/services' },
+  { label: 'Tarifs', href: '/tarifs' },
   { label: 'FAQ', href: '/faq' },
   { label: 'Contact', href: '/contact' },
 ];
@@ -46,48 +46,57 @@ export const pricing = {
   delay: 'Sous 48h',
 };
 
-export const entretienPage = {
-  heading: 'Entretien préventif, sur site',
+export const servicesPage = {
+  heading: 'Entretien & réparation, sur site',
   intro:
-    'Un ergomètre entretenu régulièrement dure plus longtemps et tombe moins souvent en panne. On s\'occupe du nettoyage, de la lubrification et du contrôle de vos machines directement dans votre salle.',
-  includes: [
-    {
-      title: 'RowErg, SkiErg, BikeErg',
-      description: 'Nettoyage intégral, lubrification de la chaîne et du volant, contrôle du moniteur PM5.',
-      icon: 'ph:wrench',
-    },
-    {
-      title: 'Barres et haltères',
-      description: 'Nettoyage des roulements à aiguilles, traitement et prévention anti-rouille, toutes marques.',
-      icon: 'ph:barbell',
-    },
-    {
-      title: 'Audit et calendrier de maintenance',
-      description: 'Diagnostic complet de votre parc machines et calendrier d\'entretien préventif adapté à votre fréquentation.',
-      icon: 'ph:clipboard-text',
-    },
+    'Un ergomètre entretenu régulièrement dure plus longtemps et tombe moins souvent en panne. Et quand une pièce lâche, on diagnostique et on répare directement dans votre salle, sans la faire sortir.',
+  stats: [
+    { value: 'Gratuit', label: 'Devis' },
+    { value: 'Sous 48h', label: 'Intervention' },
+    { value: 'Île-de-France', label: "Zone d'intervention" },
   ],
-};
-
-export const reparationPage = {
-  heading: 'Une panne ? On intervient sous 48h',
-  intro:
-    'Corde effilochée, roulement grippé, frein à air bruyant : on diagnostique et on répare vos équipements sur place, sans les faire sortir de votre salle.',
-  includes: [
+  tabs: [
     {
-      title: 'Diagnostic gratuit',
-      description: 'On identifie la panne et on vous envoie un devis avant toute intervention.',
-      icon: 'ph:magnifying-glass',
+      id: 'entretien',
+      label: 'Entretien',
+      includes: [
+        {
+          title: 'RowErg, SkiErg, BikeErg',
+          description: 'Nettoyage intégral, lubrification de la chaîne et du volant, contrôle du moniteur PM5.',
+          icon: 'ph:wrench',
+        },
+        {
+          title: 'Barres et haltères',
+          description: 'Nettoyage des roulements à aiguilles, traitement et prévention anti-rouille, toutes marques.',
+          icon: 'ph:barbell',
+        },
+        {
+          title: 'Audit et calendrier de maintenance',
+          description: 'Diagnostic complet de votre parc machines et calendrier d\'entretien préventif adapté à votre fréquentation.',
+          icon: 'ph:clipboard-text',
+        },
+      ],
     },
     {
-      title: 'Remplacement de pièces',
-      description: 'Cordes, roulements, poignées, freins à air : remplacement des pièces d\'usure sur place.',
-      icon: 'ph:gear',
-    },
-    {
-      title: 'Intervention rapide',
-      description: 'Réparation sous 48h après confirmation du devis, en heures creuses si besoin.',
-      icon: 'ph:clock-countdown',
+      id: 'reparation',
+      label: 'Réparation',
+      includes: [
+        {
+          title: 'Diagnostic gratuit',
+          description: 'On identifie la panne et on vous envoie un devis avant toute intervention.',
+          icon: 'ph:magnifying-glass',
+        },
+        {
+          title: 'Remplacement de pièces',
+          description: 'Cordes, roulements, poignées, freins à air : remplacement des pièces d\'usure sur place.',
+          icon: 'ph:gear',
+        },
+        {
+          title: 'Intervention rapide',
+          description: 'Réparation sous 48h après confirmation du devis, en heures creuses si besoin.',
+          icon: 'ph:clock-countdown',
+        },
+      ],
     },
   ],
 };
