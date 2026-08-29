@@ -91,6 +91,26 @@ if (!reduceMotion) {
   });
 }
 
+// Hero background video: stays hidden until a real clip actually loads
+// (no source files yet - see public/media/README.md), so a missing file
+// silently falls back to the static hero photo underneath instead of a
+// broken video box. Skipped on reduced motion and on metered/slow
+// connections (Save-Data / 2g), where the static photo is preferable.
+{
+  const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+  const skipVideo = reduceMotion || connection?.saveData || connection?.effectiveType === 'slow-2g' || connection?.effectiveType === '2g';
+  if (!skipVideo) {
+    document.querySelectorAll<HTMLVideoElement>('[data-hero-video]').forEach((video) => {
+      video.addEventListener('canplay', () => {
+        video.hidden = false;
+        video.play().catch(() => {});
+      });
+      video.preload = 'auto';
+      video.load();
+    });
+  }
+}
+
 // FAQ accordion: keep native <details>/<summary> semantics (keyboard and
 // screen-reader behavior untouched) but animate the panel height instead
 // of the native instant show/hide. Skipped entirely under reduced motion.
