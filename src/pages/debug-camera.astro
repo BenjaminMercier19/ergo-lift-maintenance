@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Debug caméra — cadrages 9 points</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, sans-serif; background: #060606; color: #fff; display: flex; min-height: 100vh; }
+    #viewer-wrap { flex: 1; position: relative; background: #060606; transition: background-color 0.15s ease; }
+    #viewer-wrap [data-mount] { position: absolute; inset: 0; }
+    model-viewer { width: 100%; height: 100%; }
+    #panel { width: 360px; flex-shrink: 0; background: #111; padding: 1.5rem; overflow-y: auto; border-left: 1px solid #333; }
+    #panel h1 { font-size: 1.1rem; margin: 0 0 0.5rem; }
+    #panel h2 { font-size: 0.9rem; margin: 1.5rem 0 0.5rem; color: #aaa; }
+    #panel p { font-size: 0.8rem; color: #999; line-height: 1.5; margin: 0 0 1rem; }
+    #model-tabs, #slot-tabs { display: flex; gap: 0.4rem; margin-bottom: 1rem; }
+    #model-tabs button, #slot-tabs button {
+      flex: 1; text-align: center; padding: 0.6rem 0.5rem; background: transparent; color: #ccc;
+      border: 1px solid #333; border-radius: 4px; cursor: pointer; font-size: 0.8rem;
+    }
+    #model-tabs button.active, #slot-tabs button.active { background: #fff; color: #111; border-color: #fff; font-weight: 600; }
+    #capture {
+      width: 100%; padding: 0.75rem; background: #2a5; color: #fff; border: none;
+      border-radius: 4px; font-size: 0.9rem; font-weight: 600; cursor: pointer; margin-bottom: 1.25rem;
+    }
+    #capture:hover { background: #3c6; }
+    .slider-row { margin-bottom: 0.85rem; }
+    .slider-row label { display: block; font-size: 0.78rem; color: #ccc; margin-bottom: 0.3rem; }
+    .slider-row input { width: 100%; }
+    #readout { font-size: 0.75rem; color: #8f8; line-height: 1.6; background: #000; padding: 0.6rem; border-radius: 4px; margin-bottom: 1rem; word-break: break-word; }
+    #live-readout { font-size: 0.75rem; color: #fc8; line-height: 1.6; background: #000; padding: 0.6rem; border-radius: 4px; margin-bottom: 1rem; word-break: break-word; }
+    #output { width: 100%; background: #000; color: #9cf; font-size: 0.7rem; border: 1px solid #333; border-radius: 4px; padding: 0.6rem; }
+    #copy { width: 100%; padding: 0.6rem; margin-top: 0.5rem; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+    #copy:hover { background: #444; }
+  </style>
+</head>
+<body>
+  <div id="viewer-wrap">
+    <div data-mount></div>
+  </div>
+  <div id="panel">
+    <h1>Cadrages caméra — 9 points</h1>
+    <p>Glisse sur le modèle pour tourner, molette/pincer pour zoomer. Choisis un modèle puis un moment (entrée / optimale / sortie), ajuste la vue, et clique "Capturer".</p>
+
+    <h2>Modèle</h2>
+    <div id="model-tabs">
+      <button data-model="skierg" class="active">SkiErg</button>
+      <button data-model="bikeerg">BikeErg</button>
+      <button data-model="rowerg">RowErg</button>
+    </div>
+
+    <h2>Moment</h2>
+    <div id="slot-tabs">
+      <button data-slot="entry" class="active">Entrée</button>
+      <button data-slot="optimal">Optimale</button>
+      <button data-slot="exit">Sortie</button>
+    </div>
+
+    <button id="capture">📸 Capturer la vue actuelle</button>
+
+    <h2>Lumière (aperçu, non capturée)</h2>
+    <div class="slider-row">
+      <label>Exposition</label>
+      <input type="range" id="exposure" min="0.2" max="2" step="0.05" />
+    </div>
+    <div class="slider-row">
+      <label>Intensité des ombres</label>
+      <input type="range" id="shadow" min="0" max="2" step="0.05" />
+    </div>
+    <div class="slider-row">
+      <label>Clarté du fond</label>
+      <input type="range" id="bg" min="0" max="30" step="1" />
+    </div>
+
+    <h2>Valeurs actuelles</h2>
+    <div id="readout"></div>
+
+    <h2>Vue actuelle (en direct pendant que tu glisses)</h2>
+    <div id="live-readout"></div>
+
+    <h2>Config générée (les 9 points)</h2>
+    <textarea id="output" readonly rows="20"></textarea>
+    <button id="copy">Copier dans le presse-papiers</button>
+  </div>
+  <script>import '../scripts/debug-camera';</script>
+</body>
+</html>

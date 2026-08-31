@@ -2,7 +2,6 @@
 // Copywriting retravaillé à partir de reference/content-inventory.md (site actuel).
 
 export const nav = [
-  { label: 'Services', href: '/services' },
   { label: 'Tarifs', href: '/tarifs' },
   { label: 'FAQ', href: '/faq' },
   { label: 'Contact', href: '/contact' },
@@ -13,31 +12,8 @@ export const hero = {
   subheadline:
     'Entretien, réparation et nettoyage de vos RowErg, SkiErg, BikeErg et barres olympiques, directement dans votre salle. Intervention sous 48h, devis gratuit.',
   ctaPrimary: 'Demander une intervention',
-  ctaSecondary: 'Voir nos services',
+  ctaSecondary: 'Découvrir nos services',
 };
-
-export const services = [
-  {
-    title: 'Entretien Concept 2',
-    description:
-      'Nettoyage complet, lubrification et remplacement des pièces d\'usure pour RowErg, SkiErg et BikeErg.',
-    icon: 'ph:wrench',
-  },
-  {
-    title: 'Barres et haltères',
-    description:
-      'Démontage intégral, nettoyage des roulements à aiguilles, traitement anti-rouille et lubrification, toutes marques.',
-    icon: 'ph:barbell',
-  },
-  {
-    title: 'Audit et planification',
-    description:
-      'Diagnostic complet de votre parc machines et calendrier de maintenance préventive sur mesure.',
-    icon: 'ph:clipboard-text',
-  },
-];
-
-export const serviceTag = 'Devis gratuit · Réponse sous 24h';
 
 export const pricing = {
   cleaning: '80 € / machine',
@@ -46,68 +22,63 @@ export const pricing = {
   delay: 'Sous 48h',
 };
 
-export const servicesPage = {
-  heading: 'Entretien & réparation, sur site',
-  intro:
-    'Un ergomètre entretenu régulièrement dure plus longtemps et tombe moins souvent en panne. Et quand une pièce lâche, on diagnostique et on répare directement dans votre salle, sans la faire sortir.',
-  stats: [
-    { value: 'Gratuit', label: 'Devis' },
-    { value: 'Sous 48h', label: 'Intervention' },
-    { value: 'Île-de-France', label: "Zone d'intervention" },
-  ],
-  tabs: [
-    {
-      id: 'entretien',
-      label: 'Entretien',
-      includes: [
-        {
-          title: 'RowErg, SkiErg, BikeErg',
-          description: 'Nettoyage intégral, lubrification de la chaîne et du volant, contrôle du moniteur PM5.',
-          icon: 'ph:wrench',
-        },
-        {
-          title: 'Barres et haltères',
-          description: 'Nettoyage des roulements à aiguilles, traitement et prévention anti-rouille, toutes marques.',
-          icon: 'ph:barbell',
-        },
-        {
-          title: 'Audit et calendrier de maintenance',
-          description: 'Diagnostic complet de votre parc machines et calendrier d\'entretien préventif adapté à votre fréquentation.',
-          icon: 'ph:clipboard-text',
-        },
-      ],
-    },
-    {
-      id: 'reparation',
-      label: 'Réparation',
-      includes: [
-        {
-          title: 'Diagnostic gratuit',
-          description: 'On identifie la panne et on vous envoie un devis avant toute intervention.',
-          icon: 'ph:magnifying-glass',
-        },
-        {
-          title: 'Remplacement de pièces',
-          description: 'Cordes, roulements, poignées, freins à air : remplacement des pièces d\'usure sur place.',
-          icon: 'ph:gear',
-        },
-        {
-          title: 'Intervention rapide',
-          description: 'Réparation sous 48h après confirmation du devis, en heures creuses si besoin.',
-          icon: 'ph:clock-countdown',
-        },
-      ],
-    },
-  ],
-};
-
 export const equipment = [
   'RowErg',
   'SkiErg',
   'BikeErg',
   'Assault AirBike',
   'Rogue EchoBike',
+  'Barres et haltères',
 ];
+
+// Plain lead-in section above act 01: gives the sticky 3-act story a real
+// scroll runway to arrive at, instead of starting instantly at page load
+// with no "arrival" moment. `**term**` marks words rendered emphasized
+// (see renderEmphasis() in index.astro) - monochrome only (bold/white),
+// no accent color.
+export const storyIntro = {
+  eyebrow: 'Spécialiste Concept 2 · Île-de-France',
+  headline: "Entretien et **réparation** d'ergomètres, **sur site**",
+  sub: 'Ergomètres, vélos à résistance et matériel de musculation guidée. Toutes marques.',
+};
+
+type StoryStage = {
+  id: string;
+  number: string;
+  label: string;
+  heading: string;
+  body: string;
+  points: string[];
+};
+
+export const heroStory: { stages: StoryStage[] } = {
+  stages: [
+    {
+      id: 'ouverture',
+      number: '01',
+      label: 'Présentation',
+      heading: hero.headline,
+      body: hero.subheadline,
+      points: equipment,
+    },
+    {
+      id: 'reparation',
+      number: '02',
+      label: 'Réparation',
+      heading: 'Réparation mécanique sur site',
+      body: "Diagnostic, **remplacement des pièces d'usure**, remise en service testée — sur ergomètres, vélos à résistance et matériel de musculation guidée, **toutes marques**.",
+      points: ['Diagnostic gratuit', 'Toutes marques', 'Intervention sous 48h'],
+    },
+    {
+      id: 'entretien',
+      number: '03',
+      label: 'Entretien',
+      heading: 'Nettoyage complet de parc machine',
+      body: "**Deux passages par an**, quelle que soit la taille du parc. Démontage, contrôle, lubrification, test, et un **rapport écrit** à chaque intervention.",
+      points: ['Nettoyage & lubrification', '2 passages par an', 'Rapport détaillé'],
+    },
+  ],
+};
 
 
 export const faq = [
