@@ -1,13 +1,15 @@
-// Homepage "story" hero: a carousel of 3 models (SkiErg → BikeErg →
-// RowErg) behind three scrolling stages, à la lightweight.info. No GSAP
-// pin here - `.story-visual` is kept in view via plain CSS
+// Homepage "story" hero: 3 models (SkiErg → BikeErg → RowErg) stacked in
+// the same frame behind three scrolling stages, à la lightweight.info. No
+// GSAP pin here - `.story-visual` is kept in view via plain CSS
 // `position:sticky` (see index.astro), so the page never stops scrolling.
 // A single scrubbed proxy tween drives a normalized 0-1 `progress`, which
-// several small piecewise functions read to drive: the carousel track
-// (slides only in short windows around each stage boundary, holds still
-// while a stage is being read - a real carousel, not a continuous drift),
-// each panel's own subtle camera drift while it's the active panel, and
-// the shared light/vignette mood across the whole scroll range.
+// several small piecewise functions read to drive: each panel's own
+// camera dolly/pan across its full active span (a real, continuous camera
+// move, not just a settle), a short opacity crossfade between panels at
+// each stage boundary (the outgoing model fades out as the incoming one
+// fades in - no lateral slide), and the shared light/vignette mood across
+// the whole scroll range. The first panel also gets a one-off zoom+fade
+// entrance tween on load, independent of scroll.
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { withBase } from '../utils/url';
@@ -48,11 +50,10 @@ const SHADOW_VALUES = LIGHT.map((l) => l.shadowIntensity);
 const BG_VALUES = LIGHT.map((l) => l.bgLightness);
 const VIGNETTE_VALUES = LIGHT.map((l) => l.vignette);
 
-// The carousel only slides in a short window around each boundary, and
-// holds still the rest of the time - a real carousel, not a drift.
+// Crossfade window (as a fraction of total progress) around each stage
+// boundary: the outgoing panel fades 1→0 while the incoming one fades
+// 0→1 over the same span.
 const WINDOW = 0.06;
-const TRACK_STOPS = [0, 1 / 3 - WINDOW, 1 / 3 + WINDOW, 2 / 3 - WINDOW, 2 / 3 + WINDOW, 1];
-const TRACK_VALUES = [0, 0, -100 / 3, -100 / 3, -200 / 3, -200 / 3];
 
 function clamp01(n: number) {
   return Math.min(1, Math.max(0, n));
@@ -66,6 +67,21 @@ function piecewise(stops: number[], values: number[], p: number) {
   const span = stops[idx + 1] - stops[idx] || 1;
   const t = clamp01((p - stops[idx]) / span);
   return lerp(values[idx], values[idx + 1], t);
+}
+
+// Panel i fades in around the start of its span (unless it's the first
+// panel - that one gets a one-off entrance tween instead) and fades out
+// around the end of its span (unless it's the last panel).
+function opacityForPanel(index: number, total: number, span: [number, number], p: number) {
+  let op = 1;
+  const [s0, s1] = span;
+  if (index > 0) {
+    op = Math.min(op, clamp01((p - (s0 - WINDOW)) / (2 * WINDOW)));
+  }
+  if (index < total - 1) {
+    op = Math.min(op, 1 - clamp01((p - (s1 - WINDOW)) / (2 * WINDOW)));
+  }
+  return op;
 }
 
 const grid = document.querySelector<HTMLElement>('[data-story-grid]');
@@ -133,8 +149,7 @@ if (grid && visual && track && vignetteEl) {
         };
 
         if (reduceMotion || !isDesktop) {
-          // Simple fallback: one auto-rotating model, no carousel.
-          track.classList.add('story-track-single');
+          // Simple fallback: one auto-rotating model, no crossfade.
           const viewer = makeViewer(PANELS[0].src, PANELS[0].label, PANELS[0].from);
           viewer.setAttribute('auto-rotate', '');
           viewer.setAttribute('camera-controls', '');
@@ -153,13 +168,10 @@ if (grid && visual && track && vignetteEl) {
           viewer.style.height = '100%';
           panelEl.appendChild(viewer);
           track.appendChild(panelEl);
-          return { viewer, from: cfg.from, to: cfg.to, span: cfg.span };
+          return { panelEl, viewer, from: cfg.from, to: cfg.to, span: cfg.span };
         });
 
         const applyProgress = (p: number) => {
-          const xPercent = piecewise(TRACK_STOPS, TRACK_VALUES, p);
-          track.style.transform = `translateX(${xPercent}%)`;
-
           const exposure = piecewise(LIGHT_STOPS, EXPOSURE_VALUES, p);
           const shadow = piecewise(LIGHT_STOPS, SHADOW_VALUES, p);
           const bg = piecewise(LIGHT_STOPS, BG_VALUES, p);
@@ -167,7 +179,7 @@ if (grid && visual && track && vignetteEl) {
           visual.style.backgroundColor = `hsl(0 0% ${bg}%)`;
           vignetteEl.style.background = `radial-gradient(circle at 65% 50%, transparent 30%, rgba(0,0,0,${vignette}) 100%)`;
 
-          panels.forEach((panel) => {
+          panels.forEach((panel, i) => {
             const [s0, s1] = panel.span;
             const t = clamp01((p - s0) / (s1 - s0));
             const azimuth = lerp(panel.from.azimuth, panel.to.azimuth, t);
@@ -175,9 +187,19 @@ if (grid && visual && track && vignetteEl) {
             panel.viewer.cameraOrbit = `${azimuth}deg ${panel.from.polar}deg ${radius}m`;
             panel.viewer.exposure = exposure;
             panel.viewer.setAttribute('shadow-intensity', String(shadow));
+            panel.panelEl.style.opacity = String(opacityForPanel(i, panels.length, panel.span, p));
           });
         };
         applyProgress(0);
+
+        // One-off entrance for the first panel: starts zoomed in and
+        // transparent, settles into place - independent of scroll. This
+        // branch only runs when !reduceMotion (see early return above).
+        gsap.fromTo(
+          panels[0].panelEl,
+          { opacity: 0, scale: 1.18 },
+          { opacity: 1, scale: 1, duration: 1.2, ease: 'power2.out' }
+        );
 
         const proxy = { progress: 0 };
         gsap.to(proxy, {
