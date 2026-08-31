@@ -1,27 +1,81 @@
-// Homepage "story" hero: one SkiErg model stays sticky behind three
-// scrolling stages (01 Présentation / 02 Réparation / 03 Entretien), à la
-// lightweight.info. No GSAP pin here - `.story-visual` is kept in view via
-// plain CSS `position:sticky` (see index.astro), so the page never stops
-// scrolling. A single scrubbed proxy tween drives a normalized 0-1
-// `progress`, which we map through 4 keyframes at the exact thirds that
-// match the 3 equal-height stages, so the camera/light "mood" change stays
-// in sync with whichever stage is actually on screen.
+// Homepage "story" hero: a carousel of 3 models (SkiErg → BikeErg →
+// RowErg) behind three scrolling stages, à la lightweight.info. No GSAP
+// pin here - `.story-visual` is kept in view via plain CSS
+// `position:sticky` (see index.astro), so the page never stops scrolling.
+// A single scrubbed proxy tween drives a normalized 0-1 `progress`, which
+// several small piecewise functions read to drive: the carousel track
+// (slides only in short windows around each stage boundary, holds still
+// while a stage is being read - a real carousel, not a continuous drift),
+// each panel's own subtle camera drift while it's the active panel, and
+// the shared light/vignette mood across the whole scroll range.
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { withBase } from '../utils/url';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const MODEL_SRC = '/models/skierg.glb';
-const MODEL_LABEL = 'SkiErg';
+type CameraShot = { azimuth: number; polar: number; radius: number };
+
+// Captured by hand via /debug-camera (drag/zoom the model, read the exact
+// values off the live readout) - one shot per "moment": top of page,
+// start of act 02, start of act 03, bottom of page.
+const KEYFRAMES: CameraShot[] = [
+  { azimuth: -2.9, polar: 85.7, radius: 4.58 },
+  { azimuth: 71.8, polar: 96, radius: 2.48 },
+  { azimuth: 250, polar: 74, radius: 3.72 },
+  { azimuth: 340, polar: 74, radius: 3.32 },
+];
+
+// Each panel settles into KEYFRAMES[i] as it slides into place, then
+// drifts gently toward KEYFRAMES[i+1] while its act (span) is being read.
+const PANELS = [
+  { src: '/models/skierg.glb', label: 'SkiErg', from: KEYFRAMES[0], to: KEYFRAMES[1], span: [0, 1 / 3] as [number, number] },
+  { src: '/models/bikeerg.glb', label: 'BikeErg', from: KEYFRAMES[1], to: KEYFRAMES[2], span: [1 / 3, 2 / 3] as [number, number] },
+  { src: '/models/rowerg.glb', label: 'RowErg', from: KEYFRAMES[2], to: KEYFRAMES[3], span: [2 / 3, 1] as [number, number] },
+];
+
+// Wider than the raw captured light values on purpose - "plus marquant"
+// per the approved plan. Reused shape (4 points at the exact thirds).
+const LIGHT_STOPS = [0, 1 / 3, 2 / 3, 1];
+const LIGHT = [
+  { exposure: 0.5, shadowIntensity: 0.6, bgLightness: 1, vignette: 0.45 },
+  { exposure: 0.9, shadowIntensity: 1.0, bgLightness: 9, vignette: 0.58 },
+  { exposure: 1.25, shadowIntensity: 1.4, bgLightness: 18, vignette: 0.45 },
+  { exposure: 1.5, shadowIntensity: 1.7, bgLightness: 26, vignette: 0.62 },
+];
+const EXPOSURE_VALUES = LIGHT.map((l) => l.exposure);
+const SHADOW_VALUES = LIGHT.map((l) => l.shadowIntensity);
+const BG_VALUES = LIGHT.map((l) => l.bgLightness);
+const VIGNETTE_VALUES = LIGHT.map((l) => l.vignette);
+
+// The carousel only slides in a short window around each boundary, and
+// holds still the rest of the time - a real carousel, not a drift.
+const WINDOW = 0.06;
+const TRACK_STOPS = [0, 1 / 3 - WINDOW, 1 / 3 + WINDOW, 2 / 3 - WINDOW, 2 / 3 + WINDOW, 1];
+const TRACK_VALUES = [0, 0, -100 / 3, -100 / 3, -200 / 3, -200 / 3];
+
+function clamp01(n: number) {
+  return Math.min(1, Math.max(0, n));
+}
+function lerp(a: number, b: number, t: number) {
+  return a + (b - a) * t;
+}
+function piecewise(stops: number[], values: number[], p: number) {
+  let idx = 0;
+  while (idx < stops.length - 2 && p > stops[idx + 1]) idx++;
+  const span = stops[idx + 1] - stops[idx] || 1;
+  const t = clamp01((p - stops[idx]) / span);
+  return lerp(values[idx], values[idx + 1], t);
+}
 
 const grid = document.querySelector<HTMLElement>('[data-story-grid]');
 const visual = grid?.querySelector<HTMLElement>('[data-story-visual]');
-const mount = grid?.querySelector<HTMLElement>('[data-m3d-mount]');
+const track = grid?.querySelector<HTMLElement>('[data-m3d-mount]');
+const vignetteEl = grid?.querySelector<HTMLElement>('[data-story-vignette]');
 const stages = grid ? Array.from(grid.querySelectorAll<HTMLElement>('[data-story-stage]')) : [];
 const railLinks = grid ? Array.from(grid.querySelectorAll<HTMLAnchorElement>('[data-story-rail]')) : [];
 
-if (grid && visual && mount) {
+if (grid && visual && track && vignetteEl) {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
   const skipHeavyMedia = connection?.saveData || connection?.effectiveType === 'slow-2g' || connection?.effectiveType === '2g';
@@ -65,53 +119,63 @@ if (grid && visual && mount) {
         obs.disconnect();
         loadLibrary();
 
-        const viewer = document.createElement('model-viewer') as HTMLElement & { cameraOrbit: string; exposure: number };
-        viewer.setAttribute('src', withBase(MODEL_SRC));
-        viewer.setAttribute('alt', `Modèle 3D ${MODEL_LABEL}, machine entretenue par Ergo&Lift Maintenance`);
-        viewer.setAttribute('environment-image', 'neutral');
-        viewer.setAttribute('interaction-prompt', 'none');
-        viewer.setAttribute('camera-orbit', '-20deg 74deg 2.2m');
-        viewer.style.width = '100%';
-        viewer.style.height = '100%';
-        mount.appendChild(viewer);
-
         const isDesktop = window.matchMedia('(min-width: 1025px)').matches;
 
+        type Viewer = HTMLElement & { cameraOrbit: string; exposure: number };
+        const makeViewer = (src: string, label: string, shot: CameraShot) => {
+          const viewer = document.createElement('model-viewer') as Viewer;
+          viewer.setAttribute('src', withBase(src));
+          viewer.setAttribute('alt', `Modèle 3D ${label}, machine entretenue par Ergo&Lift Maintenance`);
+          viewer.setAttribute('environment-image', 'neutral');
+          viewer.setAttribute('interaction-prompt', 'none');
+          viewer.setAttribute('camera-orbit', `${shot.azimuth}deg ${shot.polar}deg ${shot.radius}m`);
+          return viewer;
+        };
+
         if (reduceMotion || !isDesktop) {
+          // Simple fallback: one auto-rotating model, no carousel.
+          track.classList.add('story-track-single');
+          const viewer = makeViewer(PANELS[0].src, PANELS[0].label, PANELS[0].from);
           viewer.setAttribute('auto-rotate', '');
           viewer.setAttribute('camera-controls', '');
           viewer.setAttribute('touch-action', 'pan-y');
           viewer.setAttribute('exposure', '1');
           viewer.setAttribute('shadow-intensity', '1');
+          track.appendChild(viewer);
           return;
         }
 
-        // 4 keyframes (start of 01, boundary 01/02, boundary 02/03, end of
-        // 03) mapped to the exact thirds of total scroll, since the 3
-        // stages are equal height - keeps the "mood" change synced to
-        // whichever stage is actually centered in the viewport.
-        const keyframes = [
-          { azimuth: -20, radius: 2.2, exposure: 0.6, shadowIntensity: 0.7, bgLightness: 2 },
-          { azimuth: 110, radius: 1.75, exposure: 0.95, shadowIntensity: 1, bgLightness: 7 },
-          { azimuth: 250, radius: 1.3, exposure: 1.2, shadowIntensity: 1.3, bgLightness: 11 },
-          { azimuth: 340, radius: 1.05, exposure: 1.35, shadowIntensity: 1.5, bgLightness: 14 },
-        ];
-        const stops = [0, 1 / 3, 2 / 3, 1];
+        const panels = PANELS.map((cfg) => {
+          const panelEl = document.createElement('div');
+          panelEl.className = 'story-panel';
+          const viewer = makeViewer(cfg.src, cfg.label, cfg.from);
+          viewer.style.width = '100%';
+          viewer.style.height = '100%';
+          panelEl.appendChild(viewer);
+          track.appendChild(panelEl);
+          return { viewer, from: cfg.from, to: cfg.to, span: cfg.span };
+        });
 
         const applyProgress = (p: number) => {
-          let idx = 0;
-          while (idx < stops.length - 2 && p > stops[idx + 1]) idx++;
-          const span = stops[idx + 1] - stops[idx] || 1;
-          const t = (p - stops[idx]) / span;
-          const from = keyframes[idx];
-          const to = keyframes[idx + 1];
-          const lerp = (a: number, b: number) => a + (b - a) * t;
-          const azimuth = lerp(from.azimuth, to.azimuth);
-          const radius = lerp(from.radius, to.radius);
-          viewer.cameraOrbit = `${azimuth}deg 74deg ${radius}m`;
-          viewer.exposure = lerp(from.exposure, to.exposure);
-          viewer.setAttribute('shadow-intensity', String(lerp(from.shadowIntensity, to.shadowIntensity)));
-          visual.style.backgroundColor = `hsl(0 0% ${lerp(from.bgLightness, to.bgLightness)}%)`;
+          const xPercent = piecewise(TRACK_STOPS, TRACK_VALUES, p);
+          track.style.transform = `translateX(${xPercent}%)`;
+
+          const exposure = piecewise(LIGHT_STOPS, EXPOSURE_VALUES, p);
+          const shadow = piecewise(LIGHT_STOPS, SHADOW_VALUES, p);
+          const bg = piecewise(LIGHT_STOPS, BG_VALUES, p);
+          const vignette = piecewise(LIGHT_STOPS, VIGNETTE_VALUES, p);
+          visual.style.backgroundColor = `hsl(0 0% ${bg}%)`;
+          vignetteEl.style.background = `radial-gradient(circle at 65% 50%, transparent 30%, rgba(0,0,0,${vignette}) 100%)`;
+
+          panels.forEach((panel) => {
+            const [s0, s1] = panel.span;
+            const t = clamp01((p - s0) / (s1 - s0));
+            const azimuth = lerp(panel.from.azimuth, panel.to.azimuth, t);
+            const radius = lerp(panel.from.radius, panel.to.radius, t);
+            panel.viewer.cameraOrbit = `${azimuth}deg ${panel.from.polar}deg ${radius}m`;
+            panel.viewer.exposure = exposure;
+            panel.viewer.setAttribute('shadow-intensity', String(shadow));
+          });
         };
         applyProgress(0);
 
@@ -129,6 +193,6 @@ if (grid && visual && mount) {
         });
       },
       { rootMargin: '300px' }
-    ).observe(mount);
+    ).observe(track);
   }
 }
