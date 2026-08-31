@@ -1,77 +1,53 @@
 ---
 import { Icon } from 'astro-icon/components';
-import { Image } from 'astro:assets';
 import NikeLayout from '../layouts/NikeLayout.astro';
-import heroImg from '../assets/photos/hero.jpg';
-import serviceImg from '../assets/photos/entretien-skierg-cordes.jpg';
-import bandImg from '../assets/photos/intervention-banner.jpg';
-import {
-  hero, services, serviceTag, equipment, contact, testimonial, social,
-} from '../data/content';
-import { withBase } from '../utils/url';
-
-const serviceLinks = ['/services#entretien', '/services#entretien', '/services#entretien'];
+import { heroStory, hero, contact, testimonial, social } from '../data/content';
 ---
 
 <NikeLayout
   title="Accueil"
   description="Entretien et réparation mobile d'ergomètres Concept 2 et de barres olympiques en Île-de-France. Intervention sous 48h, devis gratuit."
 >
-  <section style="position:relative;min-height:100dvh;display:flex;align-items:flex-end;overflow:hidden;">
-    <Image src={heroImg} alt="Équipe Ergo&Lift en intervention sur des rameurs Concept 2" widths={[640, 960, 1280, 1920]} sizes="100vw" style="position:absolute;top:-12%;left:0;width:100%;height:124%;object-fit:cover;" data-parallax priority />
-    <video data-hero-video hidden muted loop playsinline preload="none" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
-      <source src={withBase('/media/hero.webm')} type="video/webm" />
-      <source src={withBase('/media/hero.mp4')} type="video/mp4" />
-    </video>
-    <div style="position:absolute;inset:0;background:linear-gradient(0deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.35) 45%, rgba(0,0,0,0.1) 70%, transparent 100%);"></div>
-    <div data-hero-in style="position:relative;max-width:1400px;margin:0 auto;width:100%;padding:0 1.5rem 4rem;color:#fff;">
-      <h1 class="display" style="font-size:clamp(2.5rem, 5.5vw, 4.25rem);max-width:26ch;margin:0 0 1rem;">{hero.headline}</h1>
-      <p style="max-width:46ch;font-size:1.1rem;line-height:1.5;color:rgba(255,255,255,0.9);margin:0 0 1.75rem;">{hero.subheadline}</p>
-      <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-        <a href={contact.phoneHref} class="pill pill-solid">{hero.ctaPrimary}</a>
-        <a href="#services" class="pill pill-ghost">{hero.ctaSecondary}</a>
-      </div>
-    </div>
-  </section>
-
-  <section id="services" style="max-width:1400px;margin:0 auto;padding:5rem 1.5rem;">
-    <div style="display:grid;grid-template-columns:1fr;gap:1rem;" class="services-grid">
-      <a data-reveal href={withBase(serviceLinks[0])} style="grid-column:span 2;position:relative;min-height:22rem;border-radius:4px;overflow:hidden;text-decoration:none;color:#fff;display:flex;align-items:flex-end;">
-        <Image src={serviceImg} alt="Nettoyage des cordes d'un SkiErg" widths={[640, 960, 1400]} sizes="(max-width: 768px) 100vw, 700px" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />
-        <div style="position:absolute;inset:0;background:linear-gradient(0deg, rgba(0,0,0,0.85), transparent 60%);"></div>
-        <div style="position:relative;padding:2rem;">
-          <Icon name="ph:wrench" style="width:2rem;height:2rem;color:#fff;margin-bottom:0.75rem;" aria-hidden="true" />
-          <h2 class="display" style="font-size:2rem;margin:0 0 0.5rem;">{services[0].title}</h2>
-          <p style="max-width:40ch;color:rgba(255,255,255,0.9);margin:0;">{services[0].description}</p>
-        </div>
-      </a>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;grid-column:span 2;" class="services-sub">
-        {services.slice(1).map((s, i) => (
-          <a data-reveal href={withBase(serviceLinks[i + 1])} style="background:var(--soft);border-radius:4px;padding:2rem;text-decoration:none;color:var(--ink);display:block;">
-            <Icon name={s.icon} style="width:1.75rem;height:1.75rem;color:var(--ink);margin-bottom:0.75rem;" aria-hidden="true" />
-            <h2 class="display" style="font-size:1.5rem;margin:0 0 0.5rem;">{s.title}</h2>
-            <p style="color:var(--charcoal);margin:0;font-size:0.95rem;">{s.description}</p>
+  <div class="story-grid" data-story-grid>
+    <div class="story-visual" data-story-visual>
+      <nav class="story-rail" aria-label="Sommaire">
+        {heroStory.stages.map((stage) => (
+          <a href={`#story-${stage.id}`} data-story-rail={stage.id}>
+            <span class="story-rail-number">{stage.number}</span>
+            <span class="story-rail-label">{stage.label}</span>
           </a>
         ))}
-      </div>
+      </nav>
+      <div data-m3d-mount class="story-model"></div>
     </div>
-    <p style="margin-top:1.5rem;font-weight:700;font-size:0.95rem;">{serviceTag}</p>
-  </section>
 
-  <section style="max-width:1400px;margin:0 auto;padding:5rem 1.5rem;display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:center;" class="specialties-layout" data-m3d-hero>
-    <div>
-      <h2 class="display" style="font-size:clamp(1.75rem,4vw,2.5rem);margin:0 0 0.5rem;">Nos spécialités</h2>
-      <p style="color:var(--charcoal);font-size:1.05rem;margin:0 0 1.5rem;max-width:48ch;">Les ergomètres et vélos à air que nous entretenons en Île-de-France.</p>
-      <div data-reveal-group style="display:flex;flex-wrap:wrap;gap:0.6rem;">
-        {equipment.map((e) => (
-          <span style="border:1px solid rgba(0,0,0,0.15);border-radius:999px;padding:0.5rem 1.1rem;font-size:0.85rem;font-weight:500;color:var(--charcoal);">{e}</span>
-        ))}
-      </div>
+    <div class="story-content">
+      {heroStory.stages.map((stage, i) => (
+        <section id={`story-${stage.id}`} data-story-stage={stage.id} class="story-stage">
+          <div class="story-text" data-hero-in={i === 0 ? true : undefined} data-reveal={i === 0 ? undefined : true}>
+            <span class="story-eyebrow">{stage.number} — {stage.label}</span>
+            {i === 0 ? (
+              <h1 class="display story-heading">{stage.heading}</h1>
+            ) : (
+              <h2 class="display story-heading">{stage.heading}</h2>
+            )}
+            <p class="story-body">{stage.body}</p>
+            <div class="story-points">
+              {stage.points.map((p) => (
+                <span class="story-point">{p}</span>
+              ))}
+            </div>
+            {i === 0 && (
+              <div class="story-ctas">
+                <a href={contact.phoneHref} class="pill pill-solid">{hero.ctaPrimary}</a>
+                <a href="#story-reparation" class="pill pill-ghost">{hero.ctaSecondary}</a>
+              </div>
+            )}
+          </div>
+        </section>
+      ))}
     </div>
-    <div data-reveal style="aspect-ratio:1/1;max-height:32rem;">
-      <div data-m3d-mount style="width:100%;height:100%;"></div>
-    </div>
-  </section>
+  </div>
 
   <section data-reveal style="max-width:900px;margin:0 auto;padding:6rem 1.5rem;text-align:center;">
     <h2 class="display" style="font-size:2.25rem;margin:0 0 1rem;">Ce que nos clients en disent</h2>
@@ -86,13 +62,11 @@ const serviceLinks = ['/services#entretien', '/services#entretien', '/services#e
     </a>
   </section>
 
-  <section style="position:relative;padding:6rem 1.5rem;overflow:hidden;">
-    <Image src={bandImg} alt="Intervention Ergo&Lift en salle" widths={[640, 960, 1280, 1920]} sizes="100vw" style="position:absolute;top:-12%;left:0;width:100%;height:124%;object-fit:cover;" data-parallax />
-    <div style="position:absolute;inset:0;background:rgba(0,0,0,0.6);"></div>
+  <section style="position:relative;padding:6rem 1.5rem;background:var(--ink);">
     <div data-reveal style="position:relative;max-width:1400px;margin:0 auto;text-align:center;color:#fff;">
       <h2 class="display" style="font-size:clamp(2rem,5vw,3.5rem);margin:0 0 1.5rem;">Prêt à passer à l'action ?</h2>
       <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-        <a href={contact.phoneHref} class="pill pill-solid">Appeler {contact.phone}</a>
+        <a href={contact.phoneHref} class="pill pill-solid" style="background:#fff;color:var(--ink);">Appeler {contact.phone}</a>
         <a href={`mailto:${contact.email}`} class="pill pill-ghost">Envoyer un email</a>
       </div>
     </div>
@@ -111,12 +85,127 @@ const serviceLinks = ['/services#entretien', '/services#entretien', '/services#e
   </section>
 
   <style>
-    @media (max-width: 768px) {
-      .services-grid > a { grid-column: span 1 !important; }
-      .services-sub { grid-column: span 1 !important; grid-template-columns: 1fr !important; }
-      .specialties-layout { grid-template-columns: 1fr !important; }
+    .story-grid {
+      display: grid;
+    }
+    .story-visual, .story-content {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    .story-visual {
+      position: sticky;
+      top: 0;
+      height: 100dvh;
+      overflow: hidden;
+      background: #060606;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.4s ease;
+      z-index: 0;
+    }
+    .story-model {
+      width: min(72vw, 640px);
+      aspect-ratio: 1 / 1;
+    }
+    .story-rail {
+      position: absolute;
+      top: 6.5rem;
+      left: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      z-index: 1;
+    }
+    .story-rail a {
+      display: flex;
+      align-items: baseline;
+      gap: 0.6rem;
+      text-decoration: none;
+      color: rgba(255,255,255,0.45);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-left: 2px solid rgba(255,255,255,0.2);
+      padding-left: 0.85rem;
+      transition: color 0.3s ease, border-color 0.3s ease;
+    }
+    .story-rail a[data-active] {
+      color: #fff;
+      border-color: #fff;
+    }
+    .story-content {
+      position: relative;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .story-text {
+      pointer-events: auto;
+    }
+    .story-stage {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 6rem 1.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .story-text {
+      max-width: 46ch;
+      color: #fff;
+    }
+    .story-eyebrow {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 0.75rem;
+    }
+    .story-heading {
+      font-size: clamp(2rem, 4.5vw, 3.25rem);
+      margin: 0 0 1rem;
+    }
+    .story-body {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.85);
+      margin: 0 0 1.5rem;
+    }
+    .story-points {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-bottom: 1.75rem;
+    }
+    .story-point {
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 999px;
+      padding: 0.5rem 1.1rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .story-ctas {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    @media (min-width: 1025px) {
+      .story-stage { padding-left: 15rem; }
+    }
+    @media (max-width: 1024px) {
+      .story-grid { display: block; }
+      .story-visual { position: static; height: 62vh; }
+      .story-rail { display: none; }
+      .story-content { background: var(--ink); }
+      .story-stage { min-height: auto; padding: 3.5rem 1.5rem; justify-content: flex-start !important; }
     }
   </style>
-  <script>import '../scripts/models-3d';</script>
+  <script>import '../scripts/hero-story';</script>
   <script>import '../scripts/instagram-feed';</script>
 </NikeLayout>

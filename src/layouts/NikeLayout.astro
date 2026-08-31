@@ -72,7 +72,7 @@ const currentPath = new URL(Astro.request.url).pathname;
       outline: 2px solid var(--ink);
       outline-offset: 2px;
     }
-    #services { scroll-margin-top: 72px; }
+    [data-story-stage] { scroll-margin-top: 72px; }
     @media (prefers-reduced-motion: reduce) {
       .pill, .navlink { transition: none; }
     }
