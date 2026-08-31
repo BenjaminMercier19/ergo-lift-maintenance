@@ -1,13 +1,32 @@
 ---
 import { Icon } from 'astro-icon/components';
 import NikeLayout from '../layouts/NikeLayout.astro';
-import { heroStory, hero, contact, testimonial, social } from '../data/content';
+import { heroStory, hero, storyIntro, contact, testimonial, social } from '../data/content';
+
+// `**term**` in copy renders as bold/full-white against the dimmer body
+// text - monochrome emphasis only, no accent color (content.ts is
+// author-controlled, no user input, so set:html here is safe).
+function escapeHtml(str: string) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function renderEmphasis(text: string) {
+  return escapeHtml(text).replace(/\*\*(.+?)\*\*/g, '<strong class="story-strong">$1</strong>');
+}
 ---
 
 <NikeLayout
   title="Accueil"
   description="Entretien et réparation mobile d'ergomètres Concept 2 et de barres olympiques en Île-de-France. Intervention sous 48h, devis gratuit."
 >
+  <section class="story-intro">
+    <div class="story-intro-inner" data-hero-in>
+      <span class="story-eyebrow">{storyIntro.eyebrow}</span>
+      <p class="display story-intro-headline" set:html={renderEmphasis(storyIntro.headline)} />
+      <p class="story-intro-sub">{storyIntro.sub}</p>
+      <span class="story-intro-cue">Découvrir ↓</span>
+    </div>
+  </section>
+
   <div class="story-grid" data-story-grid>
     <div class="story-visual" data-story-visual>
       <nav class="story-rail" aria-label="Sommaire">
@@ -27,14 +46,28 @@ import { heroStory, hero, contact, testimonial, social } from '../data/content';
     <div class="story-content">
       {heroStory.stages.map((stage, i) => (
         <section id={`story-${stage.id}`} data-story-stage={stage.id} class="story-stage">
-          <div class="story-text" data-hero-in={i === 0 ? true : undefined} data-reveal={i === 0 ? undefined : true}>
+          <div class="story-text" data-reveal>
             <span class="story-eyebrow">{stage.number} — {stage.label}</span>
-            {i === 0 ? (
-              <h1 class="display story-heading">{stage.heading}</h1>
+            {stage.blocks ? (
+              stage.blocks.map((block) => (
+                <div class="story-block">
+                  <span class="story-block-kicker">{block.kicker}</span>
+                  <h2 class="display story-block-heading">{block.heading}</h2>
+                  {(Array.isArray(block.body) ? block.body : [block.body]).map((paragraph) => (
+                    <p class="story-body" set:html={renderEmphasis(paragraph)} />
+                  ))}
+                </div>
+              ))
             ) : (
-              <h2 class="display story-heading">{stage.heading}</h2>
+              <>
+                {i === 0 ? (
+                  <h1 class="display story-heading">{stage.heading}</h1>
+                ) : (
+                  <h2 class="display story-heading">{stage.heading}</h2>
+                )}
+                <p class="story-body">{stage.body}</p>
+              </>
             )}
-            <p class="story-body">{stage.body}</p>
             <div class="story-points">
               {stage.points.map((p) => (
                 <span class="story-point">{p}</span>
@@ -88,6 +121,46 @@ import { heroStory, hero, contact, testimonial, social } from '../data/content';
   </section>
 
   <style is:global>
+    .story-intro {
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #060606;
+      padding: 6rem 1.5rem;
+      text-align: center;
+    }
+    .story-intro-inner {
+      max-width: 720px;
+    }
+    .story-intro-inner .story-eyebrow {
+      color: rgba(255,255,255,0.5);
+    }
+    .story-intro-headline {
+      font-size: clamp(2rem, 5.5vw, 3.75rem);
+      color: rgba(255,255,255,0.5);
+      font-weight: 600;
+      line-height: 1.15;
+      margin: 0.75rem 0 1.25rem;
+    }
+    .story-intro-headline .story-strong {
+      color: #fff;
+      font-weight: 800;
+    }
+    .story-intro-sub {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.7);
+      max-width: 46ch;
+      margin: 0 auto 3rem;
+      line-height: 1.6;
+    }
+    .story-intro-cue {
+      display: inline-block;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+    }
     .story-grid {
       display: grid;
     }
@@ -203,6 +276,23 @@ import { heroStory, hero, contact, testimonial, social } from '../data/content';
       line-height: 1.6;
       color: rgba(255,255,255,0.85);
       margin: 0 0 1.5rem;
+    }
+    .story-strong {
+      color: #fff;
+      font-weight: 700;
+    }
+    .story-block + .story-block {
+      margin-top: 2.25rem;
+    }
+    .story-block-kicker {
+      display: block;
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 0.4rem;
+    }
+    .story-block-heading {
+      font-size: clamp(1.5rem, 3.2vw, 2.1rem);
+      margin: 0 0 0.85rem;
     }
     .story-points {
       display: flex;

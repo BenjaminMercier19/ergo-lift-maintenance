@@ -29,26 +29,41 @@ type PanelShots = { entry: CameraShot; optimal: CameraShot; exit: CameraShot };
 // real per-model framing.
 const PANEL_SHOTS: PanelShots[] = [
   {
-    entry: { azimuth: -2.9, polar: 85.7, radius: 4.58 },
-    optimal: { azimuth: -2.9, polar: 85.7, radius: 4.58 },
+    entry: { azimuth: -72.1, polar: 92.8, radius: 3.22 },
+    optimal: { azimuth: -2.9, polar: 85.7, radius: 4.4 },
     exit: { azimuth: 71.8, polar: 96, radius: 2.48 },
-  },
+  }, // SkiErg
   {
     entry: { azimuth: 71.8, polar: 96, radius: 2.48 },
-    optimal: { azimuth: 71.8, polar: 96, radius: 2.48 },
-    exit: { azimuth: 250, polar: 74, radius: 3.72 },
-  },
+    optimal: { azimuth: 4.3, polar: 76.7, radius: 5.38 },
+    exit: { azimuth: 301.2, polar: 83.8, radius: 3.68 },
+  }, // BikeErg
   {
-    entry: { azimuth: 250, polar: 74, radius: 3.72 },
-    optimal: { azimuth: 250, polar: 74, radius: 3.72 },
-    exit: { azimuth: 340, polar: 74, radius: 3.32 },
-  },
+    entry: { azimuth: 107.5, polar: 78.5, radius: 2.84 },
+    optimal: { azimuth: 171.4, polar: 71.3, radius: 3.69 },
+    exit: { azimuth: 237.4, polar: 92.8, radius: 2.43 },
+  }, // RowErg
 ];
 
 const PANELS = [
-  { src: '/models/skierg.glb', label: 'SkiErg', shots: PANEL_SHOTS[0], span: [0, 1 / 3] as [number, number] },
-  { src: '/models/bikeerg.glb', label: 'BikeErg', shots: PANEL_SHOTS[1], span: [1 / 3, 2 / 3] as [number, number] },
-  { src: '/models/rowerg.glb', label: 'RowErg', shots: PANEL_SHOTS[2], span: [2 / 3, 1] as [number, number] },
+  {
+    src: '/models/skierg.glb',
+    label: 'SkiErg',
+    shots: PANEL_SHOTS[0],
+    span: [0, 1 / 3] as [number, number],
+  },
+  {
+    src: '/models/bikeerg.glb',
+    label: 'BikeErg',
+    shots: PANEL_SHOTS[1],
+    span: [1 / 3, 2 / 3] as [number, number],
+  },
+  {
+    src: '/models/rowerg.glb',
+    label: 'RowErg',
+    shots: PANEL_SHOTS[2],
+    span: [2 / 3, 1] as [number, number],
+  },
 ];
 
 // Wider than the raw captured light values on purpose - "plus marquant"
@@ -87,7 +102,12 @@ function piecewise(stops: number[], values: number[], p: number) {
 // Panel i fades in around the start of its span (unless it's the first
 // panel - that one gets a one-off entrance tween instead) and fades out
 // around the end of its span (unless it's the last panel).
-function opacityForPanel(index: number, total: number, span: [number, number], p: number) {
+function opacityForPanel(
+  index: number,
+  total: number,
+  span: [number, number],
+  p: number,
+) {
   let op = 1;
   const [s0, s1] = span;
   if (index > 0) {
@@ -104,7 +124,13 @@ function opacityForPanel(index: number, total: number, span: [number, number], p
 // to sync to), holds at optimal for the read of the span, then moves
 // optimal -> exit over the same window the panel fades out (clamped to
 // the span end for the last panel).
-function cameraForPanel(index: number, total: number, span: [number, number], shots: PanelShots, p: number) {
+function cameraForPanel(
+  index: number,
+  total: number,
+  span: [number, number],
+  shots: PanelShots,
+  p: number,
+) {
   const [s0, s1] = span;
   const entryStart = index > 0 ? s0 - WINDOW : s0;
   const entryEnd = s0 + WINDOW;
@@ -128,13 +154,26 @@ const grid = document.querySelector<HTMLElement>('[data-story-grid]');
 const visual = grid?.querySelector<HTMLElement>('[data-story-visual]');
 const track = grid?.querySelector<HTMLElement>('[data-m3d-mount]');
 const vignetteEl = grid?.querySelector<HTMLElement>('[data-story-vignette]');
-const stages = grid ? Array.from(grid.querySelectorAll<HTMLElement>('[data-story-stage]')) : [];
-const railLinks = grid ? Array.from(grid.querySelectorAll<HTMLAnchorElement>('[data-story-rail]')) : [];
+const stages = grid
+  ? Array.from(grid.querySelectorAll<HTMLElement>('[data-story-stage]'))
+  : [];
+const railLinks = grid
+  ? Array.from(grid.querySelectorAll<HTMLAnchorElement>('[data-story-rail]'))
+  : [];
 
 if (grid && visual && track && vignetteEl) {
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
-  const skipHeavyMedia = connection?.saveData || connection?.effectiveType === 'slow-2g' || connection?.effectiveType === '2g';
+  const reduceMotion = window.matchMedia(
+    '(prefers-reduced-motion: reduce)',
+  ).matches;
+  const connection = (
+    navigator as Navigator & {
+      connection?: { saveData?: boolean; effectiveType?: string };
+    }
+  ).connection;
+  const skipHeavyMedia =
+    connection?.saveData ||
+    connection?.effectiveType === 'slow-2g' ||
+    connection?.effectiveType === '2g';
 
   // Scrollspy on the rail: cheap, runs regardless of 3D/motion state.
   if (railLinks.length && stages.length) {
@@ -153,7 +192,7 @@ if (grid && visual && track && vignetteEl) {
           if (id) setActive(id);
         });
       },
-      { threshold: 0.5 }
+      { threshold: 0.5 },
     );
     stages.forEach((stage) => spy.observe(stage));
   }
@@ -165,7 +204,8 @@ if (grid && visual && track && vignetteEl) {
       libraryRequested = true;
       const script = document.createElement('script');
       script.type = 'module';
-      script.src = 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js';
+      script.src =
+        'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js';
       document.head.appendChild(script);
     };
 
@@ -181,16 +221,26 @@ if (grid && visual && track && vignetteEl) {
         const makeViewer = (src: string, label: string, shot: CameraShot) => {
           const viewer = document.createElement('model-viewer') as Viewer;
           viewer.setAttribute('src', withBase(src));
-          viewer.setAttribute('alt', `Modèle 3D ${label}, machine entretenue par Ergo&Lift Maintenance`);
+          viewer.setAttribute(
+            'alt',
+            `Modèle 3D ${label}, machine entretenue par Ergo&Lift Maintenance`,
+          );
           viewer.setAttribute('environment-image', 'neutral');
           viewer.setAttribute('interaction-prompt', 'none');
-          viewer.setAttribute('camera-orbit', `${shot.azimuth}deg ${shot.polar}deg ${shot.radius}m`);
+          viewer.setAttribute(
+            'camera-orbit',
+            `${shot.azimuth}deg ${shot.polar}deg ${shot.radius}m`,
+          );
           return viewer;
         };
 
         if (reduceMotion || !isDesktop) {
           // Simple fallback: one auto-rotating model, no crossfade.
-          const viewer = makeViewer(PANELS[0].src, PANELS[0].label, PANELS[0].shots.optimal);
+          const viewer = makeViewer(
+            PANELS[0].src,
+            PANELS[0].label,
+            PANELS[0].shots.optimal,
+          );
           viewer.setAttribute('auto-rotate', '');
           viewer.setAttribute('camera-controls', '');
           viewer.setAttribute('touch-action', 'pan-y');
@@ -220,11 +270,19 @@ if (grid && visual && track && vignetteEl) {
           vignetteEl.style.background = `radial-gradient(circle at 65% 50%, transparent 30%, rgba(0,0,0,${vignette}) 100%)`;
 
           panels.forEach((panel, i) => {
-            const shot = cameraForPanel(i, panels.length, panel.span, panel.shots, p);
+            const shot = cameraForPanel(
+              i,
+              panels.length,
+              panel.span,
+              panel.shots,
+              p,
+            );
             panel.viewer.cameraOrbit = `${shot.azimuth}deg ${shot.polar}deg ${shot.radius}m`;
             panel.viewer.exposure = exposure;
             panel.viewer.setAttribute('shadow-intensity', String(shadow));
-            panel.panelEl.style.opacity = String(opacityForPanel(i, panels.length, panel.span, p));
+            panel.panelEl.style.opacity = String(
+              opacityForPanel(i, panels.length, panel.span, p),
+            );
           });
         };
         applyProgress(0);
@@ -235,7 +293,7 @@ if (grid && visual && track && vignetteEl) {
         gsap.fromTo(
           panels[0].panelEl,
           { opacity: 0, scale: 1.18 },
-          { opacity: 1, scale: 1, duration: 1.2, ease: 'power2.out' }
+          { opacity: 1, scale: 1, duration: 1.2, ease: 'power2.out' },
         );
 
         const proxy = { progress: 0 };
@@ -251,7 +309,7 @@ if (grid && visual && track && vignetteEl) {
           onUpdate: () => applyProgress(proxy.progress),
         });
       },
-      { rootMargin: '300px' }
+      { rootMargin: '300px' },
     ).observe(track);
   }
 }

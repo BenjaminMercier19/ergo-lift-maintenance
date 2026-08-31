@@ -31,7 +31,29 @@ export const equipment = [
   'Barres et haltères',
 ];
 
-export const heroStory = {
+// Plain lead-in section above act 01: gives the sticky 3-act story a real
+// scroll runway to arrive at, instead of starting instantly at page load
+// with no "arrival" moment. `**term**` marks words rendered emphasized
+// (see renderEmphasis() in index.astro) - monochrome only (bold/white),
+// no accent color.
+export const storyIntro = {
+  eyebrow: 'Spécialiste Concept 2 · Île-de-France',
+  headline: "Entretien et **réparation** d'ergomètres, **sur site**",
+  sub: 'Ergomètres, vélos à résistance et matériel de musculation guidée. Toutes marques.',
+};
+
+type StoryBlock = { kicker: string; heading: string; body: string | string[] };
+type StoryStage = {
+  id: string;
+  number: string;
+  label: string;
+  heading?: string;
+  body?: string;
+  blocks?: StoryBlock[];
+  points: string[];
+};
+
+export const heroStory: { stages: StoryStage[] } = {
   stages: [
     {
       id: 'ouverture',
@@ -45,17 +67,44 @@ export const heroStory = {
       id: 'reparation',
       number: '02',
       label: 'Réparation',
-      heading: 'Une panne ? On intervient sous 48h',
-      body: 'Corde effilochée, roulement grippé, frein à air bruyant : on diagnostique et on répare vos équipements sur place, sans les faire sortir de votre salle.',
-      points: ['Diagnostic gratuit', 'Remplacement de pièces', 'Intervention rapide'],
+      blocks: [
+        {
+          kicker: 'Diagnostic et remise en service',
+          heading: 'Réparation mécanique sur site',
+          body: "Nous prenons en charge l'ensemble des **pannes mécaniques** sur ergomètres, vélos à résistance et machines à charges guidées. Diagnostic sur site, remplacement des pièces d'usure, **remise en service testée**.",
+        },
+        {
+          kicker: "Champ d'intervention",
+          heading: 'Ergomètres et musculation',
+          body: [
+            "Notre expertise couvre les mêmes gammes qu'en entretien préventif — **Concept 2**, **Rogue** et **Assault Fitness** — auxquelles s'ajoute l'ensemble du matériel de musculation guidée toutes marques : poulies hautes et basses, tirages horizontaux et verticaux, cadres à charges guidées, presses.",
+            'Nous intervenons sur les composants mécaniques — chaînes, courroies, roulements, câbles gainés, poulies, verrouillages et amortisseurs — indépendamment du constructeur. Les **diagnostics électroniques** sur console (PM5, moniteur Assault, écran Rogue) sont également traités.',
+          ],
+        },
+      ],
+      points: ['Diagnostic gratuit', 'Toutes marques', 'Intervention sous 48h'],
     },
     {
       id: 'entretien',
       number: '03',
       label: 'Entretien',
-      heading: 'Entretien préventif, sur site',
-      body: 'Un ergomètre entretenu régulièrement dure plus longtemps et tombe moins souvent en panne. On s\'occupe du nettoyage, de la lubrification et du contrôle de vos machines directement dans votre salle.',
-      points: ['Nettoyage & lubrification', 'Contrôle moniteur PM5', 'Audit & calendrier'],
+      blocks: [
+        {
+          kicker: 'Nettoyage et entretien préventif',
+          heading: 'Nettoyage complet de parc machine',
+          body: "Nous prenons en charge l'**entretien intégral** de votre parc, d'une machine isolée à une flotte complète.",
+        },
+        {
+          kicker: 'Notre approche',
+          heading: 'Peu importe la taille du parc',
+          body: [
+            "Deux rameurs dans une salle privée ou quinze SkiErgs alignés dans une box, le protocole ne change pas. Nous adaptons **la durée d'intervention** à votre volume, pas notre niveau d'exigence.",
+            '**Deux passages par an**, c\'est le bon rythme pour un parc en pleine santé.',
+            "Démontage, nettoyage interne, contrôle des points d'usure, lubrification, remontage et test. Un **rapport écrit** vous est remis en fin d'intervention.",
+          ],
+        },
+      ],
+      points: ['Nettoyage & lubrification', '2 passages par an', 'Rapport détaillé'],
     },
   ],
 };
