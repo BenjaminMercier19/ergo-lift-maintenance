@@ -48,26 +48,12 @@ function renderEmphasis(text: string) {
         <section id={`story-${stage.id}`} data-story-stage={stage.id} class="story-stage">
           <div class="story-text" data-reveal>
             <span class="story-eyebrow">{stage.number} — {stage.label}</span>
-            {stage.blocks ? (
-              stage.blocks.map((block) => (
-                <div class="story-block">
-                  <span class="story-block-kicker">{block.kicker}</span>
-                  <h2 class="display story-block-heading">{block.heading}</h2>
-                  {(Array.isArray(block.body) ? block.body : [block.body]).map((paragraph) => (
-                    <p class="story-body" set:html={renderEmphasis(paragraph)} />
-                  ))}
-                </div>
-              ))
+            {i === 0 ? (
+              <h1 class="display story-heading">{stage.heading}</h1>
             ) : (
-              <>
-                {i === 0 ? (
-                  <h1 class="display story-heading">{stage.heading}</h1>
-                ) : (
-                  <h2 class="display story-heading">{stage.heading}</h2>
-                )}
-                <p class="story-body">{stage.body}</p>
-              </>
+              <h2 class="display story-heading">{stage.heading}</h2>
             )}
+            <p class="story-body" set:html={renderEmphasis(stage.body)} />
             <div class="story-points">
               {stage.points.map((p) => (
                 <span class="story-point">{p}</span>
@@ -280,19 +266,6 @@ function renderEmphasis(text: string) {
     .story-strong {
       color: #fff;
       font-weight: 700;
-    }
-    .story-block + .story-block {
-      margin-top: 2.25rem;
-    }
-    .story-block-kicker {
-      display: block;
-      font-size: 0.95rem;
-      color: rgba(255,255,255,0.5);
-      margin-bottom: 0.4rem;
-    }
-    .story-block-heading {
-      font-size: clamp(1.5rem, 3.2vw, 2.1rem);
-      margin: 0 0 0.85rem;
     }
     .story-points {
       display: flex;
