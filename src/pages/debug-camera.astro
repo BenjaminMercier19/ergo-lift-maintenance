@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>Debug caméra — SkiErg</title>
+  <title>Debug caméra — cadrages 9 points</title>
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; font-family: system-ui, sans-serif; background: #060606; color: #fff; display: flex; min-height: 100vh; }
@@ -15,12 +15,12 @@
     #panel h1 { font-size: 1.1rem; margin: 0 0 0.5rem; }
     #panel h2 { font-size: 0.9rem; margin: 1.5rem 0 0.5rem; color: #aaa; }
     #panel p { font-size: 0.8rem; color: #999; line-height: 1.5; margin: 0 0 1rem; }
-    #slot-tabs { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
-    #slot-tabs button {
-      text-align: left; padding: 0.6rem 0.75rem; background: transparent; color: #ccc;
-      border: 1px solid #333; border-radius: 4px; cursor: pointer; font-size: 0.85rem;
+    #model-tabs, #slot-tabs { display: flex; gap: 0.4rem; margin-bottom: 1rem; }
+    #model-tabs button, #slot-tabs button {
+      flex: 1; text-align: center; padding: 0.6rem 0.5rem; background: transparent; color: #ccc;
+      border: 1px solid #333; border-radius: 4px; cursor: pointer; font-size: 0.8rem;
     }
-    #slot-tabs button.active { background: #fff; color: #111; border-color: #fff; font-weight: 600; }
+    #model-tabs button.active, #slot-tabs button.active { background: #fff; color: #111; border-color: #fff; font-weight: 600; }
     #capture {
       width: 100%; padding: 0.75rem; background: #2a5; color: #fff; border: none;
       border-radius: 4px; font-size: 0.9rem; font-weight: 600; cursor: pointer; margin-bottom: 1.25rem;
@@ -41,19 +41,26 @@
     <div data-mount></div>
   </div>
   <div id="panel">
-    <h1>Cadrage caméra — SkiErg</h1>
-    <p>Glisse sur le modèle pour tourner, molette/pincer pour zoomer. Choisis un moment ci-dessous, ajuste la vue, puis clique "Capturer".</p>
+    <h1>Cadrages caméra — 9 points</h1>
+    <p>Glisse sur le modèle pour tourner, molette/pincer pour zoomer. Choisis un modèle puis un moment (entrée / optimale / sortie), ajuste la vue, et clique "Capturer".</p>
 
+    <h2>Modèle</h2>
+    <div id="model-tabs">
+      <button data-model="skierg" class="active">SkiErg</button>
+      <button data-model="bikeerg">BikeErg</button>
+      <button data-model="rowerg">RowErg</button>
+    </div>
+
+    <h2>Moment</h2>
     <div id="slot-tabs">
-      <button data-slot="0" class="active">Haut de page (avant l'acte 01)</button>
-      <button data-slot="1">Début de l'acte 02</button>
-      <button data-slot="2">Début de l'acte 03</button>
-      <button data-slot="3">Bas de page (fin de l'acte 03)</button>
+      <button data-slot="entry" class="active">Entrée</button>
+      <button data-slot="optimal">Optimale</button>
+      <button data-slot="exit">Sortie</button>
     </div>
 
     <button id="capture">📸 Capturer la vue actuelle</button>
 
-    <h2>Lumière</h2>
+    <h2>Lumière (aperçu, non capturée)</h2>
     <div class="slider-row">
       <label>Exposition</label>
       <input type="range" id="exposure" min="0.2" max="2" step="0.05" />
@@ -73,8 +80,8 @@
     <h2>Vue actuelle (en direct pendant que tu glisses)</h2>
     <div id="live-readout"></div>
 
-    <h2>Config générée (les 4 moments)</h2>
-    <textarea id="output" readonly rows="16"></textarea>
+    <h2>Config générée (les 9 points)</h2>
+    <textarea id="output" readonly rows="20"></textarea>
     <button id="copy">Copier dans le presse-papiers</button>
   </div>
   <script>import '../scripts/debug-camera';</script>

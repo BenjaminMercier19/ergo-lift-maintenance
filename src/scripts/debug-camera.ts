@@ -1,23 +1,27 @@
-// Local-only tool: drag/zoom the SkiErg by hand, dial in exposure/shadow/
-// background per "moment" of the homepage story, and read out exact values
-// to paste back into hero-story.ts's `keyframes` array. Never linked from
-// the site nav, not meant to ship - see plan notes to delete before merge.
+// Local-only tool: for each of the 3 models, drag/zoom by hand to dial in
+// its entry / optimal / exit framing (9 shots total) and read out exact
+// values to paste back into hero-story.ts's PANEL_SHOTS array. Lighting
+// sliders are a live preview aid only (not captured - the site's light
+// mood is driven separately, shared across all 3 models). Never linked
+// from the site nav, not meant to ship - see plan notes to delete before
+// merge.
 import { withBase } from '../utils/url';
 
-type Slot = {
-  azimuth: number;
-  polar: number;
-  radius: number;
-  exposure: number;
-  shadowIntensity: number;
-  bgLightness: number;
-};
+type CameraShot = { azimuth: number; polar: number; radius: number };
+type ModelKey = 'skierg' | 'bikeerg' | 'rowerg';
+type PositionKey = 'entry' | 'optimal' | 'exit';
 
-const MODEL_SRC = '/models/skierg.glb';
+const MODELS: { key: ModelKey; src: string; label: string }[] = [
+  { key: 'skierg', src: '/models/skierg.glb', label: 'SkiErg' },
+  { key: 'bikeerg', src: '/models/bikeerg.glb', label: 'BikeErg' },
+  { key: 'rowerg', src: '/models/rowerg.glb', label: 'RowErg' },
+];
+const POSITIONS: PositionKey[] = ['entry', 'optimal', 'exit'];
 
 const mount = document.querySelector<HTMLElement>('[data-mount]')!;
 const wrap = document.querySelector<HTMLElement>('#viewer-wrap')!;
-const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-slot]'));
+const modelTabs = Array.from(document.querySelectorAll<HTMLButtonElement>('#model-tabs [data-model]'));
+const slotTabs = Array.from(document.querySelectorAll<HTMLButtonElement>('#slot-tabs [data-slot]'));
 const exposureInput = document.querySelector<HTMLInputElement>('#exposure')!;
 const shadowInput = document.querySelector<HTMLInputElement>('#shadow')!;
 const bgInput = document.querySelector<HTMLInputElement>('#bg')!;
@@ -27,13 +31,30 @@ const output = document.querySelector<HTMLTextAreaElement>('#output')!;
 const captureBtn = document.querySelector<HTMLButtonElement>('#capture')!;
 const copyBtn = document.querySelector<HTMLButtonElement>('#copy')!;
 
-const slots: Slot[] = [
-  { azimuth: -20, polar: 74, radius: 2.2, exposure: 0.6, shadowIntensity: 0.7, bgLightness: 2 },
-  { azimuth: 110, polar: 74, radius: 1.75, exposure: 0.95, shadowIntensity: 1, bgLightness: 7 },
-  { azimuth: 250, polar: 74, radius: 1.3, exposure: 1.2, shadowIntensity: 1.3, bgLightness: 11 },
-  { azimuth: 340, polar: 74, radius: 1.05, exposure: 1.35, shadowIntensity: 1.5, bgLightness: 14 },
-];
-let active = 0;
+// Seeded from the previous shared boundary keyframes - a reasonable
+// starting point, re-capture for real per-model framing.
+const shots: Record<ModelKey, Record<PositionKey, CameraShot>> = {
+  skierg: {
+    entry: { azimuth: -2.9, polar: 85.7, radius: 4.58 },
+    optimal: { azimuth: -2.9, polar: 85.7, radius: 4.58 },
+    exit: { azimuth: 71.8, polar: 96, radius: 2.48 },
+  },
+  bikeerg: {
+    entry: { azimuth: 71.8, polar: 96, radius: 2.48 },
+    optimal: { azimuth: 71.8, polar: 96, radius: 2.48 },
+    exit: { azimuth: 250, polar: 74, radius: 3.72 },
+  },
+  rowerg: {
+    entry: { azimuth: 250, polar: 74, radius: 3.72 },
+    optimal: { azimuth: 250, polar: 74, radius: 3.72 },
+    exit: { azimuth: 340, polar: 74, radius: 3.32 },
+  },
+};
+let activeModel: ModelKey = 'skierg';
+let activePosition: PositionKey = 'entry';
+let exposure = 1;
+let shadowIntensity = 1;
+let bgLightness = 6;
 
 const script = document.createElement('script');
 script.type = 'module';
@@ -44,40 +65,64 @@ const viewer = document.createElement('model-viewer') as HTMLElement & {
   exposure: number;
   getCameraOrbit: () => { theta: number; phi: number; radius: number };
 };
-viewer.setAttribute('src', withBase(MODEL_SRC));
-viewer.setAttribute('alt', 'SkiErg');
 viewer.setAttribute('camera-controls', '');
 viewer.setAttribute('touch-action', 'pan-y');
 viewer.setAttribute('environment-image', 'neutral');
 viewer.setAttribute('interaction-prompt', 'none');
 mount.appendChild(viewer);
 
-function applySlot(i: number) {
-  const s = slots[i];
+function currentShot() {
+  return shots[activeModel][activePosition];
+}
+
+function applyLighting() {
+  viewer.exposure = exposure;
+  viewer.setAttribute('shadow-intensity', String(shadowIntensity));
+  wrap.style.backgroundColor = `hsl(0 0% ${bgLightness}%)`;
+  exposureInput.value = String(exposure);
+  shadowInput.value = String(shadowIntensity);
+  bgInput.value = String(bgLightness);
+}
+
+function applyShot() {
+  const s = currentShot();
   viewer.setAttribute('camera-orbit', `${s.azimuth}deg ${s.polar}deg ${s.radius}m`);
-  viewer.exposure = s.exposure;
-  viewer.setAttribute('shadow-intensity', String(s.shadowIntensity));
-  wrap.style.backgroundColor = `hsl(0 0% ${s.bgLightness}%)`;
-  exposureInput.value = String(s.exposure);
-  shadowInput.value = String(s.shadowIntensity);
-  bgInput.value = String(s.bgLightness);
+  // Sync the live readout/capture baseline to the shot we just applied,
+  // rather than leaving it stale from before a model/slot switch - a
+  // capture before the user drags again must not write garbage.
+  liveOrbit = { theta: (s.azimuth * Math.PI) / 180, phi: (s.polar * Math.PI) / 180, radius: s.radius };
+  liveReadout.textContent = `azimuth ${s.azimuth.toFixed(1)}deg · polar ${s.polar.toFixed(1)}deg · radius ${s.radius.toFixed(2)}m`;
   updateReadout();
 }
 
+function loadModel(key: ModelKey) {
+  const model = MODELS.find((m) => m.key === key)!;
+  viewer.setAttribute('src', withBase(model.src));
+  viewer.setAttribute('alt', model.label);
+}
+
 function updateReadout() {
-  const s = slots[active];
+  const s = currentShot();
   readout.textContent =
-    `azimuth ${s.azimuth.toFixed(1)}deg · polar ${s.polar.toFixed(1)}deg · radius ${s.radius.toFixed(2)}m\n` +
-    `exposure ${s.exposure.toFixed(2)} · ombre ${s.shadowIntensity.toFixed(2)} · fond ${s.bgLightness}%`;
+    `${activeModel} / ${activePosition}\n` +
+    `azimuth ${s.azimuth.toFixed(1)}deg · polar ${s.polar.toFixed(1)}deg · radius ${s.radius.toFixed(2)}m`;
   updateOutput();
 }
 
+function formatShot(s: CameraShot) {
+  return `{ azimuth: ${round(s.azimuth)}, polar: ${round(s.polar)}, radius: ${round(s.radius, 2)} }`;
+}
+
 function updateOutput() {
-  const lines = slots.map(
-    (s) =>
-      `  { azimuth: ${round(s.azimuth)}, radius: ${round(s.radius, 2)}, exposure: ${round(s.exposure, 2)}, shadowIntensity: ${round(s.shadowIntensity, 2)}, bgLightness: ${round(s.bgLightness)} },`
+  const blocks = MODELS.map(
+    (m) =>
+      `  {\n` +
+      `    entry: ${formatShot(shots[m.key].entry)},\n` +
+      `    optimal: ${formatShot(shots[m.key].optimal)},\n` +
+      `    exit: ${formatShot(shots[m.key].exit)},\n` +
+      `  }, // ${m.label}`
   );
-  output.value = `const keyframes = [\n${lines.join('\n')}\n];\n// polar (tilt) captured: ${slots.map((s) => round(s.polar)).join(', ')}deg`;
+  output.value = `const PANEL_SHOTS: PanelShots[] = [\n${blocks.join('\n')}\n];`;
 }
 
 function round(n: number, decimals = 1) {
@@ -85,15 +130,26 @@ function round(n: number, decimals = 1) {
   return Math.round(n * f) / f;
 }
 
-tabs.forEach((tab, i) => {
+modelTabs.forEach((tab) => {
   tab.addEventListener('click', () => {
-    active = i;
-    tabs.forEach((t, j) => t.classList.toggle('active', j === i));
-    applySlot(i);
+    activeModel = tab.dataset.model as ModelKey;
+    modelTabs.forEach((t) => t.classList.toggle('active', t === tab));
+    loadModel(activeModel);
+    // camera-orbit set now is buffered by model-viewer until the new
+    // model finishes loading.
+    applyShot();
   });
 });
 
-let liveOrbit = { theta: (-20 * Math.PI) / 180, phi: (74 * Math.PI) / 180, radius: 2.2 };
+slotTabs.forEach((tab) => {
+  tab.addEventListener('click', () => {
+    activePosition = tab.dataset.slot as PositionKey;
+    slotTabs.forEach((t) => t.classList.toggle('active', t === tab));
+    applyShot();
+  });
+});
+
+let liveOrbit = { theta: (-2.9 * Math.PI) / 180, phi: (85.7 * Math.PI) / 180, radius: 4.58 };
 
 viewer.addEventListener('camera-change', () => {
   liveOrbit = viewer.getCameraOrbit();
@@ -104,7 +160,7 @@ viewer.addEventListener('camera-change', () => {
 });
 
 captureBtn.addEventListener('click', () => {
-  const s = slots[active];
+  const s = currentShot();
   s.azimuth = (liveOrbit.theta * 180) / Math.PI;
   s.polar = (liveOrbit.phi * 180) / Math.PI;
   s.radius = liveOrbit.radius;
@@ -112,19 +168,16 @@ captureBtn.addEventListener('click', () => {
 });
 
 exposureInput.addEventListener('input', () => {
-  slots[active].exposure = parseFloat(exposureInput.value);
-  viewer.exposure = slots[active].exposure;
-  updateReadout();
+  exposure = parseFloat(exposureInput.value);
+  applyLighting();
 });
 shadowInput.addEventListener('input', () => {
-  slots[active].shadowIntensity = parseFloat(shadowInput.value);
-  viewer.setAttribute('shadow-intensity', shadowInput.value);
-  updateReadout();
+  shadowIntensity = parseFloat(shadowInput.value);
+  applyLighting();
 });
 bgInput.addEventListener('input', () => {
-  slots[active].bgLightness = parseFloat(bgInput.value);
-  wrap.style.backgroundColor = `hsl(0 0% ${bgInput.value}%)`;
-  updateReadout();
+  bgLightness = parseFloat(bgInput.value);
+  applyLighting();
 });
 
 copyBtn.addEventListener('click', () => {
@@ -134,4 +187,12 @@ copyBtn.addEventListener('click', () => {
   });
 });
 
-viewer.addEventListener('load', () => applySlot(0), { once: true });
+viewer.addEventListener(
+  'load',
+  () => {
+    applyLighting();
+    applyShot();
+  },
+  { once: true }
+);
+loadModel(activeModel);
